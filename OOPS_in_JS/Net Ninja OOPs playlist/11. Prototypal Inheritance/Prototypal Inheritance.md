@@ -77,3 +77,44 @@ Admin class chain will look like:
 `User.__proto__` is `Object`
 `Object.__proto__` will be `null`
 
+### Important Note:
+1. Here objects of `Admin` class can access methods available in `User` class. Reason: Admin's prototype is pointing to User class.
+2. Similary, "Everything in JavaScript is an Object". console.log an array or function or any other datatype. Array's or function's prototype chain conatins `Object` at some nesting level. Hence you can call methods/properties of `Objects` on `Arrays` or `Functions` as well. But it's not appropriate to do that.
+
+### Here's what chatgpt has to say: 
+###### Qs: As arrays has the prototypes of objects, can I call all methods that can be called on an object, on array also?
+Great question — and you're absolutely right that **arrays inherit from `Object.prototype`**, so they technically have access to many of the same methods. But there’s a subtle catch:
+
+### ✅ You *can* call most `Object.prototype` methods on arrays...
+Because arrays are objects under the hood (`typeof [] === "object"`), they inherit from `Object.prototype`. So methods like these are accessible:
+
+- `hasOwnProperty()`
+- `toString()` *(though it's overridden by `Array.prototype.toString`)*
+- `valueOf()`
+- `propertyIsEnumerable()`
+
+#### Example:
+```javascript
+const arr = [1, 2, 3];
+
+console.log(arr.hasOwnProperty("1")); // true
+console.log(arr.toString());          // "1,2,3" (overridden by Array prototype)
+```
+
+### ❌ But not *all* object methods work the same on arrays
+Some methods or behaviors are:
+
+1. **Overridden**: Arrays have their own versions of `toString()`, `valueOf()`, etc.
+2. **Not meaningful** for arrays: For example, `Object.assign()` works, but copying arrays this way isn’t idiomatic.
+3. **Confusing or lossy**: Methods like `Object.keys()` return the indices as strings (`["0", "1", "2"]`) instead of values.
+
+#### Example:
+```javascript
+const arr = ["a", "b"];
+console.log(Object.keys(arr)); // ["0", "1"]
+```
+
+### Summary:
+- ✅ Yes, you can access `Object.prototype` methods on arrays.
+- ⚠️ But that doesn’t mean it’s *appropriate* or *useful* in all cases.
+- 🚫 Array-specific logic (like looping, element access, transformation) should usually use array methods.
