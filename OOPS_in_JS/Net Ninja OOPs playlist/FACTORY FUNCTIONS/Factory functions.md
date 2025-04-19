@@ -59,3 +59,18 @@ a.pop === b.pop // true
 ```
 - function name convention for factory function is `Camel notation` (createUser)
 - function name convention for constructor function in `pascal notation` (function Circle(){})
+
+- There's workaround to solve the function duplication issue in factory function also. Without adding prototypes:
+```
+function getBirthYear(){
+ // logic
+}
+
+function createUser(firstName, lastName, age){
+    return {
+        firstName, 
+        lastName,
+        getBirthYear,
+    }
+}
+```
