@@ -47,5 +47,15 @@ const createUser(email, name){
 
 - Here createUser is a factory function, where we just defined login & logout functions just once. So In case there's a bug in our function we just need to fix it in one place.
 - Even though the function is defined at once, in memory a new instance of the function is getting created for each object returned from a `factory function`.
+```
+const useOne = createUser('a@gmail.com', 'abc');
+const userTwo = createUser('b@gmail.com', 'bde');
+console.log(userOne.login === userTwo.login); // false
+Solution: Adding functions using proto
+
+const a = [1,2];
+const b = [3,4];
+a.pop === b.pop // true
+```
 - function name convention for factory function is `Camel notation` (createUser)
 - function name convention for constructor function in `pascal notation` (function Circle(){})
