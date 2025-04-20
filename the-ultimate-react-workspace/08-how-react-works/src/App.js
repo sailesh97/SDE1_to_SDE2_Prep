@@ -19,6 +19,7 @@ const content = [
 ];
 
 export default function App() {
+  console.log('App component ran')
   return (
     <div>
       <Tabbed content={content} />
@@ -27,6 +28,7 @@ export default function App() {
 }
 
 function Tabbed({ content }) {
+  console.log('Tabbed component ran')
   const [activeTab, setActiveTab] = useState(0);
 
   return (
@@ -43,7 +45,7 @@ function Tabbed({ content }) {
       ) : (
         <DifferentContent />
       )}
-      {TabContent({item: content.at(0)})}
+      {/* {TabContent({item: content.at(0)})} */}
     </div>
   );
 }
