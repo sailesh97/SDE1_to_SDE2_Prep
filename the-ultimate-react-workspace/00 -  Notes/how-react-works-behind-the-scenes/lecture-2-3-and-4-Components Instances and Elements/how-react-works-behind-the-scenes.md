@@ -12,7 +12,7 @@ If activeTab is > we show a different component using conditional rendering.
 
 When activeTab is 2 and we changed to 3, `TabContent` is unmounted and we mount `DifferentContent` at same place in DOM.
 
-![walkthrough](walkthrough.png)
+![walkthrough](./lecture2_images/walkthrough.png)
 
 ### Lecture 3: Components, Instances & Elements.
 ##### Components:
@@ -35,7 +35,7 @@ React.createElement behind the scenes will be converted to a huge immutable java
 
 Note: It's not react elements that are rendered to the DOM. React elements are just kept inside React app in memory and has nothing to do with DOM. They're simply used to create DOM elements.
 
-![summary](summary.png)
+![summary](./lecture2_images/summary.png)
 
 ### Lecture 4: Instances and Elements in Practice:
 
@@ -43,7 +43,7 @@ In this lecture, we console logged `<DifferentComponent />` and `DifferentCompon
 
 #### Logged `<DifferentComponent />` in JSX way:
 
-![how react works](how_react_element_looks_like_jsx_way.png)
+![how react works](./lecture2_images/how_react_element_looks_like_jsx_way.png)
 
 
 Do you see the `$$typeof` key in the object logged, coming beacause of Line#29.
@@ -65,20 +65,20 @@ Let's analyze the diff below:
 #### Logged `DifferentComponent()` in function way:
 
 
-![how react works](how_react_element_looks_like_function_way.png)
+![how react works](./lecture2_images/how_react_element_looks_like_function_way.png)
 
 If you observe carefully, type property is no longer of function with component name now. It's div. This is because we're returning a div from `DifferentComponent`. So type is what is returned from thecomponent function and not the component function itself. That simply means react no longer sees it as a component instance.
 
 - `$$typeof` is still a symbol though
 
-![function](what_happens_when_you_try_to_render_react_elem_returned_from_function.png)
+![function](./lecture2_images/what_happens_when_you_try_to_render_react_elem_returned_from_function.png)
 
 In pic above, you can see we're rendering TabContent at Line#51 using functions.
 It rendered in DOM as well. But it won't work as expected.
 - In devtools even though there're two instances of TabContent, it's showing only one,as React is not considering TabContent returned from a function as a valid component.
 - In TabContent we have two state variables created using useState, which is managed by it's parent `Tabbed` component and not by `TabContent` component itself, even though the state vars are local states.
 
-![parent managing state of child](parent_tabbed_managing_state_of_TabContent.png)
+![parent managing state of child](./lecture2_images/parent_tabbed_managing_state_of_TabContent.png)
 
 Remove TabContent() and see the difference in React Devtools.
 

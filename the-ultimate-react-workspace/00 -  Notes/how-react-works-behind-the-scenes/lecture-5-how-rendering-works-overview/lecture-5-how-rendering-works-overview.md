@@ -1,9 +1,9 @@
 ### Recap of what is covered in this section till now:
-![recap](recap.png)
+![recap](./lecture5_images/recap.png)
 
 How does component instances are dsiplayed in Actual DOM will be answered next!
 
-![how_components_are_painted.png](how_components_are_painted.png)
+![how_components_are_painted.png](./lecture5_images/how_components_are_painted.png)
 
 1. Step-1: Render is triggered: State is updated somewhere in application, which triggers a render
 2. Step-2: Render phase:
@@ -20,7 +20,7 @@ How does component instances are dsiplayed in Actual DOM will be answered next!
 Next, we'll zoom-into each of these 4 steps and understand in detail what happens behind the scenes.
 
 ### Step-1: Render is triggered:
-![step-1](step-1.png)
+![step-1](./lecture5_images/step-1.png)
 - Two ways when a render is triggered:
     1. Initial render of the application
     2. State is updated in one or more component instances (re-render)
@@ -53,13 +53,13 @@ One more pre-requisite for understanding Render Phase: i.e. Virtual DOMs
     - If a state update happened in a component, React will re-render all of its child components, no matter if that component is consuming the updating state as a prop or not.
     - That means If a state update happened at the root component, the entire application will be re-rendered.
     - Again re-rendering doesn't mean the actual DOM is updated, but the corresponding component functions are called and a new virtual DOM will be re-created.
-    ![virtual-dom](virtual-dom-or-react-element-tree.png)
+    ![virtual-dom](./lecture5_images/virtual-dom-or-react-element-tree.png)
 - It has nothing to do with *Shadow DOM*, both of these are different.
 - Shadow DOM is actually just a browser technology used in stuffs like web components. Example of web componennts are  `<video>`, `<audio>`. In video elements there's controllers/buttons in the video block to play/pause and other things, for which you won't show the elements in browser devtools by default. It's developed by Browser companies.
 
 Now coming to render phase:
 
-![step2renderphase](step-2-render-phase.png)
+![step2renderphase](./lecture5_images/step-2-render-phase.png)
 
 1. React will scan throguh all components and pick only those components that triggered re-render and call them, which indeed will return React elements. So the component trees will be transformed to a new React element tree(Virtual DOM).
 2. The new virtual DOM will be reconcilled with the old immutable *fibre* tree(generated from virtual dom of initial rendering) and update the same fibre tree by looking at the new virtual DOM. This updated fibre tree will be eventually used to write to the DOM.
@@ -68,7 +68,7 @@ Now coming to render phase:
 
 Let's understand the new terms introduced in last discussion:
 ##### What is reconcillation and why do we need it?
-![reconcillation](reconcillation.png)
+![reconcillation](./lecture5_images/reconcillation.png)
 Reconcillation is a step for deciding which DOM elements actually need to be inserted, deleted or updated in order to reflect the latest state changes.
 
 But why to decide and why can't we update the entire DOM whenever there's a state change? 
@@ -78,7 +78,7 @@ But why to decide and why can't we update the entire DOM whenever there's a stat
 - React reuses as much of the existing DOM as possible.
 
 ##### The Reconciler of React: Fiber:
-![alt text](fiber.png)
+![alt text](./lecture5_images/fiber.png)
 How Fiber works:
 1. During initial rendering of the application, **fiber takes** the entire React-element-tree/virtual dom and based on it builds another tree, which is the Fiber tree.
 2. How fiber tree is different than the react-element-tree?
@@ -100,7 +100,7 @@ How Fiber works:
                 - It's only possible because output of render phase doesn't produce any visible change to DOM.
 
 Now as we know what a fiber reconciler is and how it works, let's understand the reconcillation process now:
-![alt text](reconcillation_in_action.png)
+![alt text](./lecture5_images/reconcillation_in_action.png)
 
 The pic above is very self-explanatory.
 showModal state is updated to false, hence all components those are conditionally rendered based on values of showModal is deleted.
@@ -114,4 +114,4 @@ Diffing:Comparing elements based on their position in DOM.
 Once we got the updated fiber tree and we figured our the list of DOM deletion or updation required, these list of actions will be placed in something called *List of effects*, which will be used in next phase; i.e. Commit phase, where the dom will be mutated.
 
 DOMS has still not been updated yet.
-![alt text](output.png)
+![alt text](./lecture5_images/output.png)
