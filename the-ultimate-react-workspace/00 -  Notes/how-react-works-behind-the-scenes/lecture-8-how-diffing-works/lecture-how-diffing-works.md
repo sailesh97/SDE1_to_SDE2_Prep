@@ -8,9 +8,10 @@ The above two principle allows React to go from O(n^3) to O(n).
 For 1000 elements: It will be reduced from 1000,000,000 to 1000.
 
 - Diffing is comapring elements step by step between two renders based on their position in the tree.
-- There're basically two different situations that need to be considered:
+- There're basically three different situations that need to be considered:
     1. Same position, Different element
     2. Same position, Same element
+    3. Different Position, Same element - (Discussed in Lecture 10: The Key props. Applicable majorly while rendering lists)
 
 #### Scenario-1: Same position, Different element:
 ##### Scenario-1.1: Same Position, Different DOM element:
@@ -18,7 +19,7 @@ For 1000 elements: It will be reduced from 1000,000,000 to 1000.
 ##### Scenario-1.2: Same Position, Different React element:
 In both the scenarios 1.1 & 1.2:
 1. React assumes entire sub-tree is no longer valid. and hence
-2. Old components are destroyed and removed from DOM, including their state.
+2. Old components, including all its child components are destroyed and removed from DOM, including their state.
 3. Tree might be rebuilt If children stayed the same(**state is reset**).
 
 ![alt text](images/diffing-scenario-1.png)
