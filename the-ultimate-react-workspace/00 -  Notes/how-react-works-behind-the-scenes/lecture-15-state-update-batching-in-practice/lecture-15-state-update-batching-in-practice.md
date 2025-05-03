@@ -1,4 +1,4 @@
-![alt text](./lecture-15-images/batching-example.png)
+![alt text](./lecture-15-images/1-batching-example.png)
 
 We're doing practice of what we learnt in last lecture here.
 
