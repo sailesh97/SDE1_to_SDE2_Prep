@@ -6,22 +6,24 @@ Agenda: State updates are batched
 - There is also batching of multiple `setState` calls in event handlers (This is discussed in detail in this lecture.)
 
 #### code example:
-![alt text](./lecture-15-images/setState-batched.png)
+![alt text](./lecture-14-images/setState-batched.png)
 
 In above code example, there're three states and on click of reset button, we're updating the 3 states.
 
 In the event handler function we're calling multiple setState calls. The motive of this lecture is to understand, how these threee pieces of state are actually updated behind the scenes.
 
 Breaking wrong assumptions:
-![alt text](./lecture-15-images/multiple-calls-myth.png)
+![alt text](./lecture-14-images/multiple-calls-myth.png)
+
 
 As shown in image above, each state update doesn't trigger a Render + Commit phase immediately.
 
 Instead these state updates will actually get batched into just one state update for the entire event.
-![alt text](./lecture-15-images/multiple-setState-batched.png)
+![alt text](./lecture-14-images/multiple-setState-batched.png)
 
 ### Updating state is asynchronous:
-![alt text](./lecture-15-images/updating-state-is-async.png)
+![alt text](./lecture-14-images/updating-state-is-async.png)
+
 
 ### Batching beyond event handler functions:
 So far we have only talked about batching in event handler functions like our reset function..
