@@ -62,7 +62,7 @@ Now coming to render phase:
 ![step2renderphase](./lecture5_images/step-2-render-phase.png)
 
 1. React will scan throguh all components and pick only those components that triggered re-render and call them, which indeed will return React elements. So the component trees will be transformed to a new React element tree(Virtual DOM).
-2. The new virtual DOM will be reconcilled with the old immutable *fibre* tree(generated from virtual dom of initial rendering) and update the same fibre tree by looking at the new virtual DOM. This updated fibre tree will be eventually used to write to the DOM.
+2. The new virtual DOM will be reconcilled with the old mutable *fibre* tree(generated from virtual dom of initial rendering) and update the same fibre tree by looking at the new virtual DOM. This updated fibre tree will be eventually used to write to the DOM.
 3. This reconcillation will be done using the React's reconciller, which is called Fibre.
 *Note: In simple terms, reconciliation means making two things match or agree*
 

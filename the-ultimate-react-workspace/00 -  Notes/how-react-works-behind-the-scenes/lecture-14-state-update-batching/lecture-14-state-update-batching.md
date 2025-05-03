@@ -15,6 +15,7 @@ In the event handler function we're calling multiple setState calls. The motive 
 Breaking wrong assumptions:
 ![alt text](./lecture-14-images/multiple-calls-myth.png)
 
+
 As shown in image above, each state update doesn't trigger a Render + Commit phase immediately.
 
 Instead these state updates will actually get batched into just one state update for the entire event.
@@ -22,6 +23,7 @@ Instead these state updates will actually get batched into just one state update
 
 ### Updating state is asynchronous:
 ![alt text](./lecture-14-images/updating-state-is-async.png)
+
 
 ### Batching beyond event handler functions:
 So far we have only talked about batching in event handler functions like our reset function..
