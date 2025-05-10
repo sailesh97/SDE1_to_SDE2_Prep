@@ -1,0 +1,6 @@
+Stale closure
+Race condition
+Star rating jonas
+Notes of useEffect section
+AbortController
+webdevsimplified react hooks
