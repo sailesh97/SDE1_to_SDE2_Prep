@@ -16,3 +16,6 @@ As of now this is clear that the initial state we pass to useState is only consi
 Using a callback to initialize in useState, is also called *Lazy Initial State*.
 ![alt text](./lecture-5-images/initial+state+with+callback.png)
 
+## Lecture 6: useState Summary:
+*While updating state, update in immutable way.*
+![alt text](./lecture-6-images/1.%20useState%20summary.png)
