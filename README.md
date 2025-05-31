@@ -4,4 +4,6 @@
   - https://cookie-tracking.glitch.me/
   - https://new-cookie-times.glitch.me/
 - https://www.youtube.com/watch?v=GhrvZ5nUWNg
-
+- Star rating
+- Namaste JS
+- Start practicing machine coding questions
