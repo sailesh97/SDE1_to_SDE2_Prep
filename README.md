@@ -8,4 +8,7 @@
 - Namaste JS
 - Start practicing machine coding questions
 - Local VSCode IDE setup for faster code writing in interviews:
--   - Code Snippets (RFC), Rename tag plugin
+-   - Code Snippets (RFC), Rename tag plugin\
+- React19
+- React Scripts deprecated as CRA deprecated, Alternative?
+- Why do we do CRA Eject in MRV Orders
