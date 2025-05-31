@@ -7,3 +7,5 @@
 - Star rating
 - Namaste JS
 - Start practicing machine coding questions
+- Local VSCode IDE setup for faster code writing in interviews:
+-   - Code Snippets (RFC), Rename tag plugin
