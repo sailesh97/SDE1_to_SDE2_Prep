@@ -12,3 +12,4 @@
 - React19
 - React Scripts deprecated as CRA deprecated, Alternative?
 - Why do we do CRA Eject in MRV Orders
+- https://www.freecodecamp.org/news/how-microfrontends-work-iframes-to-module-federation/
