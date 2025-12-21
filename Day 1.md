@@ -397,7 +397,27 @@ mySet1.add(5); // Set(5) { 1, 'some text', {...}, {...}, 5 } - a previously dele
 console.log(mySet1); // Set(5) { 1, "some text", {…}, {…}, 5 }
 ```
 
+#### Creating set from an array:
+```
+const myArray = ["value1", "value2", "value3"];
 
+// Use the regular Set constructor to transform an Array into a Set
+const mySet = new Set(myArray);
+
+mySet.has("value1"); // returns true
+
+// Use the spread syntax to transform a set into an Array.
+console.log([...mySet]); // Will show you exactly the same Array as myArray
+```
+
+#### Remove duplicate elements from an array:
+```
+// Case sensitive (set will contain "F" and "f")
+new Set("Firefox"); // Set(7) [ "F", "i", "r", "e", "f", "o", "x" ]
+
+// Duplicate omission ("f" occurs twice in the string but set will contain only one)
+new Set("firefox"); // Set(6) [ "f", "i", "r", "e", "o", "x" ]
+```
 
 
 
