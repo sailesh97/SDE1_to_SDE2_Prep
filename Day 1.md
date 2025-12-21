@@ -65,8 +65,12 @@ for(const a of arr) console.log(a)
 ### Initial Definition
 The Array.from() static method creates a new, shallow-copied Array instance from an iterable or array-like object.
 
-iterable we discussed above
-arra-like object definition: Any object with length property
+Array.from() lets you create Arrays from:
+
+- iterable objects (objects such as Map and Set); or, if the object is not iterable,
+- array-like objects (objects with a length property and indexed elements).
+  - const a = [1,2,3] -> It's not array-like object, but an array only and all array has a length proprty built-in it.
+  - const obj = {length: 5} -> This can be considered as an array like
 
 Syntax: 
 ```
@@ -139,7 +143,36 @@ f(1, 2, 3);
 2. Sparse array
 
 #### 1. Array-like Objects: 
-Any obj with 
+- const a = [1,2,3] -> It's not array-like object, but an array only and all array has a length proprty built-in it.
+- const obj = {length: 5} -> This can be considered as an array like
 
+#### 2. Sparse array: 
+A sparse array in JavaScript is an array that has "empty slots" or "holes" where no elements have been assigned a value, meaning the elements are not stored contiguously. The length property of a sparse array is greater than the actual number of defined elements in it. 
+
+##### How to Create a Sparse Array
+You can create a sparse array in several ways: 
+2.1 Using array literals: Omit values between commas.
+```
+const sparseArr = [1, , 3]; 
+// sparseArr.length is 3, but only two elements exist
+```
+2.2 Using the Array constructor: Call the constructor with a single number argument.
+```
+const sparseArr = new Array(5); 
+// Creates an array with 5 empty slots. sparseArr.length is 5
+```
+2.3 Assigning to an index beyond the current length:
+```
+const sparseArr = [1, 2];
+sparseArr[10] = 100;
+// sparseArr.length is 11, with holes from index 2 to 9
+```
+
+2.4 Using the delete operator: This is generally discouraged for arrays as it leaves a hole instead of removing the element and shifting subsequent elements.
+```
+const sparseArr = [1, 2, 3];
+delete sparseArr[1];
+// sparseArr is now [1, empty, 3]; sparseArr.length is still 3
+```
 
 
