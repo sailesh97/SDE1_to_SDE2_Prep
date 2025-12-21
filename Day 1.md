@@ -295,10 +295,27 @@ const myMap = new Map([
   [1, "one"],
   [2, "two"],
   [3, "three"],
+  ['1', 'string1']
 ]);
 
 Output: 
 myMap.get(1) // 'one' - Here 1 is passed as number
+myMap.get('1') // string1
 
 ```
 
+#### Map objects are collections of key-value pairs. A key in the Map may only occur once; it is unique in the Map's collection.
+```
+const myMap = new Map([
+  [1, "one"],
+  [2, "two"],
+  [3, "three"],
+  ['1', 'string1'],
+    [1, 'second one']
+]);
+
+myMap.get(1)
+
+Output:
+'second one'
+```
