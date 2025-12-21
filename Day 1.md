@@ -61,7 +61,8 @@ for(const a of arr) console.log(a)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Array.from:
+## Array.from:
+### Initial Definition
 The Array.from() static method creates a new, shallow-copied Array instance from an iterable or array-like object.
 
 iterable we discussed above
@@ -73,7 +74,7 @@ Array.from(items, mapFn, thisArg)
 items
 An iterable or array-like object to convert to an array.
 
-mapFn Optional
+mapFn - **Optional**
 A function to call on every element of the array. If provided, every value to be added to the array is first passed through this function, and mapFn's return value is added to the array instead. The function is called with the following arguments:
 
 element
@@ -85,17 +86,60 @@ The index of the current element being processed in the array.
 thisArg Optional
 Value to use as this when executing mapFn.
 
-Retrun value: A new Array instance.
+Return value: A new Array instance.
 ```
 
 Example:
 ```
+String:
 Array.from("foo");
 // [ "f", "o", "o" ]
 
+Set:
 const set = new Set(["foo", "bar", "baz", "foo"]);
 Array.from(set);
 // [ "foo", "bar", "baz" ]
+
+Map:
+const map = new Map([
+  [1, 2],
+  [2, 4],
+  [4, 8],
+]);
+Array.from(map);
+// [[1, 2], [2, 4], [4, 8]]
+
+const mapper = new Map([
+  ["1", "a"],
+  ["2", "b"],
+]);
+Array.from(mapper.values());
+// ['a', 'b'];
+
+Array.from(mapper.keys());
+// ['1', '2'];
+
+
+Array-like object:
+function f() {
+  return Array.from(arguments);
+}
+
+f(1, 2, 3);
+
 ```
+
+- To convert an ordinary object that's not iterable or array-like to an array (by enumerating its property keys, values, or both), use Object.keys(), Object.values(), or Object.entries().
+- Array.from() never creates a sparse array. If the items object is missing some index properties, they become undefined in the new array.
+- Array.from() has an optional parameter mapFn, which allows you to execute a function on each element of the array being created, similar to map()
+
+### Terminologies in Initial Definition of Array.from:
+
+1. Array-like Objects
+2. Sparse array
+
+#### 1. Array-like Objects: 
+Any obj with 
+
 
 
