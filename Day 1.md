@@ -55,4 +55,5 @@ for(const a of arr) console.log(a)
 --------
 
 - Objects are not considered as either as iterator or array-like objects
+-    - [Reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol:~:text=Some%20built%2Din%20types%20are%20built%2Din%20iterables%20with%20a%20default%20iteration%20behavior%2C%20such%20as%20Array%20or%20Map%2C%20while%20other%20types%20(such%20as%20Object)%20are%20not.)
 
