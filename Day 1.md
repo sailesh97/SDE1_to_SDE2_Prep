@@ -11,9 +11,43 @@
 
 
 -----
-The below data structures are considered as both iterators and array-like objects in JavaScript:
+The following are all built-in JavaScript iterators:
 
-- String, Array, Map, Set, RegExp, Generator object returned by generator functions
+1. The Array Iterator returned by:
+  - Array.prototype[Symbol.iterator](),
+  - Array.prototype.values(),
+  - Array.prototype.keys(),
+  - Array.prototype.entries(),
+  - TypedArray.prototype.values(),
+  - TypedArray.prototype.keys(),
+  - TypedArray.prototype.entries(),
+  - TypedArray.prototype[Symbol.iterator](), and
+  - arguments[Symbol.iterator]().
+2. The String Iterator returned by
+  - String.prototype[Symbol.iterator]().
+3. The Map Iterator returned by
+  - Map.prototype[Symbol.iterator]().
+  - Map.prototype.values(),
+  - Map.prototype.keys(),
+  - Map.prototype.entries(), and
+  
+4. The Set Iterator returned by
+   - Set.prototype[Symbol.iterator]().
+   - Set.prototype.values(),
+   - Set.prototype.keys(),
+   - Set.prototype.entries(), and
+   
+5. The RegExp String Iterator returned by
+    - RegExp.prototype[Symbol.matchAll]() and
+    - String.prototype.matchAll().
+6. The Generator object returned by generator functions.
+7. The Segments Iterator returned by the
+    - [Symbol.iterator]() method of the Segments object returned by Intl.Segmenter.prototype.segment().
+8. The Iterator Helper returned by iterator helper methods such as Iterator.prototype.filter() and Iterator.prototype.map().
+
+--------
+
+- Objects are not considered as either as iterator or array-like objects
 - All iterator/array-like objects have few functions available to them in prototype of these iterators are:
   - Static method: "from"
-    - Array.from or 
+    - Iterator.from 
