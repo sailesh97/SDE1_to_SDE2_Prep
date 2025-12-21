@@ -82,6 +82,9 @@ The current element being processed in the array.
 index
 The index of the current element being processed in the array.
 
+thisArg Optional
+Value to use as this when executing mapFn.
+
 Retrun value: A new Array instance.
 ```
 
