@@ -46,7 +46,7 @@ The following are all built-in JavaScript iterators:
     - [Symbol.iterator]() method of the Segments object returned by Intl.Segmenter.prototype.segment().
 8. The Iterator Helper returned by iterator helper methods such as Iterator.prototype.filter() and Iterator.prototype.map().
 
-### <u>**for..of** loop can be used to iterate over these iterators</u>
+## **FOR..OF** loop can be used to iterate over these iterators
 That means we can use for...of loop on what is returned from arr.values(), arr.keys() and whatever is mentioned above
 
 ```
