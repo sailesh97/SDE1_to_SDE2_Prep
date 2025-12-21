@@ -256,6 +256,8 @@ for (const i of arr) {
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+## Map & Set:
+
 ### How to create Map from Contructor and from an existing array:
 [Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
 
@@ -304,7 +306,8 @@ myMap.get('1') // string1
 
 ```
 
-#### Map objects are collections of key-value pairs. A key in the Map may only occur once; it is unique in the Map's collection.
+#### Note about Map:
+Map objects are collections of key-value pairs. **A key** in the Map may only occur once; it is unique in the Map's collection.
 ```
 const myMap = new Map([
   [1, "one"],
@@ -319,3 +322,82 @@ myMap.get(1)
 Output:
 'second one'
 ```
+
+### Set
+- The Set object lets you store unique values of any type, whether primitive values or object references.
+- Set objects are collections of values. **A value** in the set may only occur once;
+- Set Composition:
+-   - A.difference(B):
+       <img width="172" height="107" alt="image" src="https://github.com/user-attachments/assets/ab02eb3c-a2d0-46a9-b7dd-fd1e7bc8a1e1" />
+    - A.intersection(B):
+        <img width="170" height="114" alt="image" src="https://github.com/user-attachments/assets/10227a1b-5096-40e3-8dc3-ea719a97c189" />
+    - A.symmetricDifference(B):
+        <img width="168" height="110" alt="image" src="https://github.com/user-attachments/assets/80c26e84-4940-4bb7-b7fc-e641ec1e37d6" />
+    - A.union(B):
+        <img width="168" height="106" alt="image" src="https://github.com/user-attachments/assets/d64e2666-7000-411b-b61f-919c450ee6db" />
+    - A.isDisjointFrom(B):
+        <img width="159" height="112" alt="image" src="https://github.com/user-attachments/assets/e045c2eb-10b3-4586-b17f-edac5e040163" />
+    - A.isSubsetOf(B):
+        <img width="168" height="109" alt="image" src="https://github.com/user-attachments/assets/5bda8ebd-cd8e-4040-989c-d4cf574ef488" />
+    - A.isSupersetOf(B):
+        <img width="162" height="118" alt="image" src="https://github.com/user-attachments/assets/f1ad081b-dd17-4829-8a85-9ef2538f3b88" />
+
+#### Set-like Objects:
+
+All set composition methods require this to be an actual Set instance, but their arguments just need to be set-like. A set-like object is an object that provides the following:
+- A size property that contains a number.
+- A has() method that takes an element and returns a boolean.
+- A keys() method that returns an iterator of the elements in the set.
+
+For example, Map objects are set-like because they also have size, has(), and keys(), so they behave just like sets of keys when used in set methods:
+
+```
+const a = new Set([1, 2, 3]);
+const b = new Map([
+  [1, "one"],
+  [2, "two"],
+  [4, "four"],
+]);
+console.log(a.union(b)); // Set(4) {1, 2, 3, 4}
+```
+
+#### Instance methods available on sets:
+- add
+- has
+- delete
+
+```
+const mySet1 = new Set();
+
+mySet1.add(1); // Set(1) { 1 }
+mySet1.add(5); // Set(2) { 1, 5 }
+mySet1.add(5); // Set(2) { 1, 5 }
+mySet1.add("some text"); // Set(3) { 1, 5, 'some text' }
+const o = { a: 1, b: 2 };
+mySet1.add(o);
+
+mySet1.add({ a: 1, b: 2 }); // o is referencing a different object, so this is okay
+
+mySet1.has(1); // true
+mySet1.has(3); // false, since 3 has not been added to the set
+mySet1.has(5); // true
+mySet1.has(Math.sqrt(25)); // true
+mySet1.has("Some Text".toLowerCase()); // true
+mySet1.has(o); // true
+
+mySet1.size; // 5
+
+mySet1.delete(5); // removes 5 from the set
+mySet1.has(5); // false, 5 has been removed
+
+mySet1.size; // 4, since we just removed one value
+
+mySet1.add(5); // Set(5) { 1, 'some text', {...}, {...}, 5 } - a previously deleted item will be added as a new item, it will not retain its original position before deletion
+
+console.log(mySet1); // Set(5) { 1, "some text", {…}, {…}, 5 }
+```
+
+
+
+
+
