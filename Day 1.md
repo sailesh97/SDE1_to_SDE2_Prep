@@ -285,14 +285,17 @@ console.log(map.size);
 // Expected output: 2
 ```
 
-#### Convert an array to map:
+#### How to create a Map:
 ```
 Syntax:
 new Map()
 new Map(iterable) -> Here array can be used, as it's an iterable
 
 If an iterable object (such as an array) is passed, all of its elements will be added to the new Map. Each element must be an array where the 0th index will be treated as "key" and 1st index of element will be considered as the value.
+```
 
+#### Convert an array to map:
+```
 const myMap = new Map([
   [1, "one"],
   [2, "two"],
@@ -359,6 +362,14 @@ const b = new Map([
   [4, "four"],
 ]);
 console.log(a.union(b)); // Set(4) {1, 2, 3, 4}
+```
+
+#### How to create sets:
+```
+Syntax:
+new Set()
+new Set(iterable)
+If an iterable object (such as an array) is passed, all of its elements will be added to the new Set. If you don't specify this parameter, or its value is null or undefined, the new Set is empty.
 ```
 
 #### Instance methods available on sets:
