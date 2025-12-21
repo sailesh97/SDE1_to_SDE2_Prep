@@ -228,6 +228,35 @@ const defaultValue = 5;
 const myGrid = Array.from({ length: rows }, () => Array(columns).fill(defaultValue));
 
 ```
+
+#### Caution with fill:
+Avoid creating a fixed-size 2D array like this: 
+```
+const badGrid = Array(3).fill(Array(4)); // ❌ This creates references to the *same* inner array.
+```
+If you modify badGrid[0][0], badGrid[1][0] and badGrid[2][0] will also change, which is usually not the intended behavior for a grid. Methods 2 and 3 create distinct inner arrays. 
+
+As per docs:
+```
+Syntax:
+fill(value)
+fill(value, start)
+fill(value, start, end)
+
+value
+Value to fill the array with. Note all elements in the array will be this exact value: if value is an **object**, each slot in the array will reference that object.
+start - Optional
+Zero-based index at which to start filling, converted to an integer.
+ - Negative index counts back from the end of the array — if -array.length <= start < 0, start + array.length is used.
+    If start < -array.length or start is omitted, 0 is used.
+    If start >= array.length, no index is filled.
+end - Optional
+Zero-based index at which to end filling, converted to an integer. fill() fills up to but not including end.
+   Negative index counts back from the end of the array — if -array.length <= end < 0, end + array.length is used.
+    If end < -array.length, 0 is used.
+    If end >= array.length or end is omitted or undefined, array.length is used, causing all indices until the end to be filled.
+    If end implies a position before or at the position that start implies, nothing is filled.
+```
 ---Array.from file  end---
 
 ## FOR...OF vs FOR...IN:
