@@ -61,6 +61,8 @@ for(const a of arr) console.log(a)
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
+---Array.from file  start---
+
 ## Array.from:
 ### Initial Definition
 The Array.from() static method creates a new, shallow-copied Array instance from an iterable or array-like object.
@@ -212,5 +214,5 @@ const denseArr = sparseArr.flat();
 const undefinedArr = [...sparseArr];
 // undefinedArr is [1, undefined, 3]
 ```
-
+---Array.from file  end---
 
