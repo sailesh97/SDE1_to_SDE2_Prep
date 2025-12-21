@@ -214,6 +214,20 @@ const denseArr = sparseArr.flat();
 const undefinedArr = [...sparseArr];
 // undefinedArr is [1, undefined, 3]
 ```
+
+#### How to create a 2-D sparse array using Array. from: (Useful for creating a Grid Data Structure):
+```
+const rows = 3;
+const columns = 4;
+const myGrid = Array.from({ length: rows }, () => new Array(columns));
+```
+
+```
+No-sparse GRID: Grid with all cells containing number 5:
+const defaultValue = 5;
+const myGrid = Array.from({ length: rows }, () => Array(columns).fill(defaultValue));
+
+```
 ---Array.from file  end---
 
 ## FOR...OF vs FOR...IN:
