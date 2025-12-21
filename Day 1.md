@@ -237,7 +237,8 @@ for (variable in object)
   statement
 ```
 
-Difference: 
+### Difference: 
+ for...in iterates over property names, for...of iterates over property values:
 ```
 const arr = [3, 5, 7];
 arr.foo = "hello";
