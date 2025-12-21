@@ -1,3 +1,4 @@
+### Agenda:
 #### Array.from
 #### https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
 #### Difference between Array-like object vs iterable object
@@ -10,7 +11,7 @@
 <img width="1085" height="631" alt="image" src="https://github.com/user-attachments/assets/d50af907-e54d-46c0-8584-f9c666aca580" />
 
 
------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 The following are all built-in JavaScript iterators:
 
 1. The Array Iterator returned by:
@@ -56,4 +57,42 @@ for(const a of arr) console.log(a)
 
 - Objects are not considered as either as iterator or array-like objects
 -    - [Reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol:~:text=Some%20built%2Din%20types%20are%20built%2Din%20iterables%20with%20a%20default%20iteration%20behavior%2C%20such%20as%20Array%20or%20Map%2C%20while%20other%20types%20(such%20as%20Object)%20are%20not.)
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#### Array.from:
+The Array.from() static method creates a new, shallow-copied Array instance from an iterable or array-like object.
+
+iterable we discussed above
+arra-like object definition: Any object with length property
+
+Syntax: 
+```
+Array.from(items, mapFn, thisArg)
+items
+An iterable or array-like object to convert to an array.
+
+mapFn Optional
+A function to call on every element of the array. If provided, every value to be added to the array is first passed through this function, and mapFn's return value is added to the array instead. The function is called with the following arguments:
+
+element
+The current element being processed in the array.
+
+index
+The index of the current element being processed in the array.
+
+Retrun value: A new Array instance.
+```
+
+Example:
+```
+Array.from("foo");
+// [ "f", "o", "o" ]
+
+const set = new Set(["foo", "bar", "baz", "foo"]);
+Array.from(set);
+// [ "foo", "bar", "baz" ]
+```
+
 
