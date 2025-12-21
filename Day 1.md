@@ -254,3 +254,51 @@ for (const i of arr) {
 // Logs: 3 5 7
 ```
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### How to create Map from Contructor and from an existing array:
+[Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+
+```
+const map = new Map();
+
+map.set("a", 1);
+map.set("b", 2);
+map.set("c", 3);
+
+console.log(map.get("a"));
+// Expected output: 1
+
+map.set("a", 97);
+
+console.log(map.get("a"));
+// Expected output: 97
+
+console.log(map.size);
+// Expected output: 3
+
+map.delete("b");
+
+console.log(map.size);
+// Expected output: 2
+```
+
+#### Convert an array to map:
+```
+Syntax:
+new Map()
+new Map(iterable) -> Here array can be used, as it's an iterable
+
+If an iterable object (such as an array) is passed, all of its elements will be added to the new Map. Each element must be an array where the 0th index will be treated as "key" and 1st index of element will be considered as the value.
+
+const myMap = new Map([
+  [1, "one"],
+  [2, "two"],
+  [3, "three"],
+]);
+
+Output: 
+myMap.get(1) // 'one' - Here 1 is passed as number
+
+```
+
