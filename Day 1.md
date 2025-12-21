@@ -45,9 +45,14 @@ The following are all built-in JavaScript iterators:
     - [Symbol.iterator]() method of the Segments object returned by Intl.Segmenter.prototype.segment().
 8. The Iterator Helper returned by iterator helper methods such as Iterator.prototype.filter() and Iterator.prototype.map().
 
+for..of loop can be used to iterate over these iterators
+That means we can use for...of loop on what is returned from arr.values(), arr.keys() and whatever is mentioned above
+
+```
+const arr = [12,23,53]
+for(const a of arr) console.log(a)
+```
 --------
 
 - Objects are not considered as either as iterator or array-like objects
-- All iterator/array-like objects have few functions available to them in prototype of these iterators are:
-  - Static method: "from"
-    - Iterator.from 
+
