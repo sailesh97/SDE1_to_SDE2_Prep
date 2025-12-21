@@ -307,6 +307,15 @@ Output:
 myMap.get(1) // 'one' - Here 1 is passed as number
 myMap.get('1') // string1
 
+// Example-2
+const arr = ["x", "y", "z"];
+
+const map = new Map(arr.map((value, index) => [index, value]));
+
+console.log(map);
+// Map { 0 => "x", 1 => "y", 2 => "z" }
+
+
 ```
 
 #### Note about Map:
