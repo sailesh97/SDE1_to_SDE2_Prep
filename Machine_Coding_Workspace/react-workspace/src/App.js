@@ -8,7 +8,14 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/nested-checkbox" element={<NestedCheckBox />} />
-      <Route path="/star-rating" element={<StarRating />} />
+      <Route path="/star-rating" element={
+        <>
+          <StarRating />
+          <StarRating maxRating={5} />
+          <StarRating maxRating={10} />
+        </>
+      } 
+      />
     </Routes>
   </BrowserRouter>);
 }
