@@ -6,7 +6,7 @@ import StarRating from "./components/StarRating/StarRating";
 import StarRatingWrapper from "./components/StarRating/StarRatingWrapper";
 import AppLayout from './AppLayout';
 import Home from "./components/Home/Home";
-import Table from "./components/Table/Table";
+import Table from "./components/Table";
 
 function App() {
   return (

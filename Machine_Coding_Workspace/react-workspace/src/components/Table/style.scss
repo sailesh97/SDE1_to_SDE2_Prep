@@ -1,0 +1,76 @@
+//Table header style
+//Setting up the table header
+.tablehead {
+  background-color: #d7d7d7;
+  border-right: 2px solid white;
+  z-index: 1;
+}
+
+//Row skeleton styling
+.row-skeleton {
+  height: 65px !important;
+  margin: 7px;
+}
+.col-skeleton {
+  height: 44px !important;
+  margin: 7px;
+}
+.MuiTableSortLabel-active .MuiTableSortLabel-iconDirectionDesc {
+  color:  rgba(0, 0, 255, 0.753) !important;
+  opacity: 1 !important
+}
+
+.MuiTableSortLabel-active .MuiTableSortLabel-iconDirectionAsc {
+  color:  rgba(0, 0, 255, 0.753) !important;
+}
+
+.MuiTableSortLabel-icon {
+  opacity: 0.4 !important
+}
+
+.MuiTableSortLabel-active .MuiTableSortLabel-iconDirectionAsc {
+  opacity: 1 !important
+}
+
+.oms-table-row {
+  .cell-border {
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+  }
+
+  .no-border {
+    border-bottom: 0;
+    padding-bottom: 8px;
+  }
+
+  .inner-first-cell {
+    padding-left: 104px;
+    position: relative;
+  }
+
+  &.oms-inner-row td {
+    padding-top: 8px;
+    height: auto;
+  }
+
+  &.oms-inner-row .no-border {
+    padding-bottom: 4px;
+  }
+}
+
+.MuiTable-root .MuiTableHead-root .MuiTableCell-head{
+  text-align: center;
+  padding: 4px !important;
+}
+
+.MuiTableCell-root{
+  letter-spacing: 0em !important;
+}
+
+@media screen and (max-width: 1650px) {
+  .order_details_table_wrapper .tableWrapper {
+    overflow-x: auto !important;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
