@@ -1,12 +1,12 @@
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router";
 import { Navigate } from "react-router-dom";
+
 import NestedCheckBox from "./components/NestedCheckbox/NestedCheckbox";
 import StarRating from "./components/StarRating/StarRating";
 import StarRatingWrapper from "./components/StarRating/StarRatingWrapper";
-import { NavLink } from "react-router";
 import AppLayout from './AppLayout';
-import NavbarTabs from "./NavbarTabs";
 import Home from "./components/Home/Home";
+import Table from "./components/Table/Table";
 
 function App() {
   return (
@@ -32,6 +32,8 @@ function App() {
               </>
             }
           />
+          <Route path="/table" element={<Table/>}/>
+          <Route path="*" element={<Navigate to="/home" />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -5,6 +5,7 @@ const tabConfig = [
   { label: "Home", path: "/home" },
   { label: "Nested Checkbox", path: "/nested-checkbox" },
   { label: "Star Rating", path: "/star-rating" },
+  {label: "Table", path: "/table"}
 ];
 
 export default function NavbarTabs() {
