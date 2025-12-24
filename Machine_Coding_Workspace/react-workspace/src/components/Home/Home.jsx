@@ -1,14 +1,11 @@
 import { NavLink } from "react-router-dom"
+import Tabs from "../../Tabs";
+
 function Home() {
     return (
         <div>
             Home
-             <NavLink to="/nested-checkbox" end>
-                Nested Checkbox
-            </NavLink>
-            <NavLink to="/star-rating" end>
-                Star Rating
-            </NavLink>
+            <Tabs />
         </div>
     )
 }

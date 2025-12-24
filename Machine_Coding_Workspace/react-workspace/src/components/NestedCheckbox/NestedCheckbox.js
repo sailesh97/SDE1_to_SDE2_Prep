@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import './NestedCheckBox.css';
 const checkBoxesData = [
   {
@@ -116,6 +117,10 @@ export default function NestedCheckBox() {
         checked={checked}
         setChecked={setChecked}
       />
+
+      <NavLink to="/" end>
+          Home
+      </NavLink>
     </div>
   );
 }
