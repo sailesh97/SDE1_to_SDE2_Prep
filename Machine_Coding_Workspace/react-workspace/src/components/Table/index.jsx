@@ -12,18 +12,27 @@ import { useSelector,useDispatch } from 'react-redux';
 import './style.scss';
 // import { updateSessionData } from '../../../utils/common/commonUtilities';
 
-const useStyles = makeStyles(() => ({
-  root: {
-    borderCollapse: 'collapse'
-  }
-}));
 
-const Table = () => {
+export default function SortTable(props) {
     return (
-        <div>
-            Table
-        </div>
-    )
-}
+    <Paper className={containerClasses}>
+      <div className={classes} style={{ maxHeight: `${tableHeight}px` }} ref={tableRef}>
+        <MaterialTable
+          aria-labelledby="tableTitle"
+          aria-label="enhanced table"
+          stickyHeader={stickyHeader}
+          classes={tableClasses}
+        >
+          <>Table Header</>
+          <>Table Body</>
+        </MaterialTable>
+        {showSkeleton &&
+          [...Array(noOfRows)].map((_, index) => (
+            <>Skeleton</>
+          ))}
+      </div>
 
-export default Table;
+      {<>Pagination</>}
+    </Paper>
+  );
+};
