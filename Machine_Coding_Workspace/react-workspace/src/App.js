@@ -7,6 +7,7 @@ import StarRatingWrapper from "./components/StarRating/StarRatingWrapper";
 import AppLayout from './AppLayout';
 import Home from "./components/Home/Home";
 import Table from "./components/Table";
+import tableProps from './components/Table/order-details-table-props';
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
               </>
             }
           />
-          <Route path="/table" element={<Table/>}/>
+          <Route path="/table" element={<Table {...tableProps}/>}/>
           <Route path="*" element={<Navigate to="/home" />} />
         </Route>
       </Routes>

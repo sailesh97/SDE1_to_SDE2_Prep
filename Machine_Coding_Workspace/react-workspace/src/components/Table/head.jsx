@@ -1,13 +1,14 @@
 import React from 'react';
 import Checkbox from '@mui/material/Checkbox';
-import grey from '@mui/material/colors/grey';
-import {makeStyles} from '@mui/styles';
+import { grey } from '@mui/material/colors';
+import { makeStyles } from '@mui/styles';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Skeleton from '@mui/material/Skeleton';
 import PropTypes from 'prop-types';
+import Icons from './icons/Icons';
 
 const useStyles = makeStyles(() => ({
   checkboxCell: {
@@ -79,7 +80,6 @@ export default function Head(props) {
     onSelectAll,
     hideSelectAllCheckbox
   } = props;
-
   const classes = useStyles();
   
   /** DERIVED PROPS START */
@@ -97,7 +97,7 @@ export default function Head(props) {
 
 
   const generateHeader = () => {
-    <>
+    return <>
       {showCheckbox ? (
         <TableCell
           padding="checkbox"

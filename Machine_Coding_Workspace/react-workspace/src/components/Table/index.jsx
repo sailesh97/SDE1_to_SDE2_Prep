@@ -7,7 +7,7 @@ import { useSelector,useDispatch } from 'react-redux';
 // import { maxTabLimit } from '../../../containers/dashboard/common/constant';
 // import { maxTabsNotification, openNewTab } from '../../../containers/virtualTabs/store/actions';
 // import Body from './body';
-// import Head from './head';
+import Head from './head';
 // import Pagination from './pagination';
 import './style.scss';
 // import { updateSessionData } from '../../../utils/common/commonUtilities';
@@ -56,7 +56,6 @@ export default function SortTable(props) {
       // Accessibility
       tabIndexValue
     } = props;
-
     // Cloned original props, so that it won't get modified in this or any of its child component
     const propsData = { ...props };
 
