@@ -29,8 +29,6 @@ const useStyles = makeStyles(() => (tableBodyStyle));
 export default function Body(props) {
   const {
     tableData,
-    key,
-
     page,
     rowsPerPage,
 
@@ -75,6 +73,7 @@ export default function Body(props) {
             });
 
             // Row selection logic when row clicked
+            // To decide value for `selected` prop for <TableRow> of material-ui, which highlights the selected rows in a table. Just for styling purpose.
             const rowSelection = key ? key === selectedRowKey : false;
 
             /* const checked = updateCheckBoxStateOfTheRecord({

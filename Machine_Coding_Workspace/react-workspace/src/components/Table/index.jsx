@@ -176,8 +176,8 @@ export default function SortTable(props) {
              * only when all lines of table body are checked 
             * */
             rowCount={totalDataCount}
-            showCheckbox={showCheckbox}
-            showCheckedIcon={showCheckedIcon}
+            showCheckbox={showCheckbox} // To show checkbox or not
+            showCheckedIcon={showCheckedIcon} // Checkbox has two variant, one with icon, one without icon
             disableCheckBox={disableCheckBox}
             selectedOrderLines={getSelectedOrderLines()}
             onSelectAll={onSelectAll}
@@ -187,31 +187,64 @@ export default function SortTable(props) {
           />
           {!showSkeleton && (
             <Body
+
+              // Hide header, when hideTableHeader is true
+              hideTableHeader={hideTableHeader}
               tableData={tableData}
-              disableHover={disableHover}
+              
               page={page}
+              rowsPerPage={rowsPerPage}
+
               order={order}
               orderBy={orderBy}
-              rowsPerPage={rowsPerPage}
+
+              disableHover={disableHover}
+
+              rowKey={rowKey} // 'order_line_key'
+              
+              // a single rowKey, which is selected. - In non-checkbox view
+              selectedRowKey={selectedRowKey} 
+
+              // Click handler for row selection
               selectedRow={selectedRow}
-              rowKey={rowKey}
-              selectedRowKey={selectedRowKey}
-              disableCheckBox={disableCheckBox}
+              
               showCheckbox={showCheckbox}
+              showCheckedIcon={showCheckedIcon}
+              disableCheckBox={disableCheckBox}
+
+              // selectedOrderLines: Array => list of checked rowKeys of orderlines
               selectedOrderLines={selectedOrderLines}
+              // onRowSelect - Click handler for checkbox, in item selection screen
               onRowSelect={onRowSelect}
+
+              /** In checkbox view, we pass selectedOrderLines prop, which is an array of rowKeys(order_line_key), which are checked.
+               * In case of item selection screen, we pass allowRowSelectionInGroup prop as true
+               * And If selectedOrderLines holds order_line_keys of all children lines of a parent line, then we pass `checked: true` to checkbox element of parent line
+               */
               allowRowSelectionInGroup={allowRowSelectionInGroup}
+
               onlyFullCancellationAllowed={onlyFullCancellationAllowed}
+
+              /** In order details table, if a line has an associated child line, we show some info only under first column i.e; Product Details columns
+               * The other columns just return null.
+               * This header config is available in serviceHeaders.
+               * Added an example in order-details-table-props.js : oderLineServicesHeaderData constant
+               */
               serviceHeaders={serviceHeaders}
               selectedServiceLines={selectedServiceLines}
+
+              // Accessibility
               tabIndexValue={tabIndexValue}
+
               showGroupSeparator={showGroupSeparator}
-              selectRowHandler={selectRowHandler}
               groupByProjects={groupByProjects}
-              // orderData={orderData}
-              showCheckedIcon={showCheckedIcon}
-              hideTableHeader={hideTableHeader}
-              // showSSTIMileageFee={showSSTIMileageFee}
+
+              // Click handler for Exchange links that is shown for sales order.
+              selectRowHandler={selectRowHandler}
+
+              orderData={orderData} // Just to distinguish If order has project_id or quote_id, based on which we decide to show groups. Could have done that outside and pass only required info.
+              // Show specific lines for mileage fees in different UX
+              showSSTIMileageFee={showSSTIMileageFee}
             />
           )}
         </MaterialTable>

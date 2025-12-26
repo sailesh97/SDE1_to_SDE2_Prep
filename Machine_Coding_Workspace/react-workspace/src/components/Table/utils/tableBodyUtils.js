@@ -123,7 +123,7 @@ const getBorderStatus = services =>
         ? 'no-border'
         : 'cell-border';
 
-const generateTableRow = ({
+const generateTableCell = ({
     cell,
     row,
     classes,
@@ -249,11 +249,11 @@ export const generateEachRecord = ({
             >
 
                 <TableRow
-                    {...getTableRowProps({ tabIndexValue, classes, rowSelection, rowKey })}
+                    {...getTableRowProps({ tabIndexValue, classes, rowSelection, rowKey, selectedRow })}
                 >
                     {/* {checboxCell} */}
                     {headerData.map((cell, columnKey) =>
-                        generateTableRow({
+                        generateTableCell({
                             cell,
                             row,
                             classes,
