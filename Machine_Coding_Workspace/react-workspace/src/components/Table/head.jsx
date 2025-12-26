@@ -9,42 +9,9 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Skeleton from '@mui/material/Skeleton';
 import PropTypes from 'prop-types';
 import Icons from './icons/Icons';
+import { tableHeaderStyles } from './tableStyles/tableHeaderStyles';
 
-const useStyles = makeStyles(() => ({
-  checkboxCell: {
-    backgroundColor: '#D7D7D7',
-    height: '72px'
-  },
-  headerCell: {
-    backgroundColor: '#D7D7D7',
-    height: '72px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    minWidth: '0'
-  },
-  visuallyHidden: {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: 1,
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    top: 20,
-    width: 1
-  },
-  colorPrimary: {
-    '&:hover': {
-      backgroundColor: 'transparent'
-    }
-  },
-  checkboxChecked: {
-    color: '#003baf'
-  },
-  checkboxCheckedDisabled: {
-    color: grey[600]
-  }
-}));
+const useStyles = makeStyles(() => (tableHeaderStyles));
 
 export default function Head(props) {
   const {
