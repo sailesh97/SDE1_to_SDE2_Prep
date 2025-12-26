@@ -12,7 +12,7 @@ const starContainerStyle = {
   gap: "4px",
 };
 
-const StarRating = ({ maxRating = 5, color = '#fcc419', size = 48, className = '', messages = [], defaultRating = 0, onSetRating}) => {
+const StarRating = ({ maxRating = 5, color = '#fcc419', size = 48, className = '', messages = [], defaultRating = 0, onSetRating = () => {}}) => {
   const [rating, setRating] = useState(defaultRating);
   const [tempRating, setTempRating] = useState(0);
   
