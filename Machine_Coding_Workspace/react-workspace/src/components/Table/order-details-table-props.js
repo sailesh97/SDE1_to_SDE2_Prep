@@ -4444,3 +4444,348 @@ export const cancellationItemSelection_oneRowChecked = {
     "groupByProjects": true,
     "hideSelectAllCheckbox": true
 };
+
+
+/**
+ * OrderDetailsTableHeader
+ * ProductDetails is a component which maps Product details in a specific manner.
+ */
+/* const orderDetailsTableHeaderData = [
+  {
+    key: orderDetailsTableHeaderConstants.item_id,
+    name: 'Product Details',
+    output(value, row) {
+      // check if price is unlocked and display the open lock icon
+      const isPriceUnlocked =
+        enablePriceUnlock && isApplicable(row.is_price_unlocked);
+      const { productDetails, line_behaviors } = row;
+      let className = 'order-detail-productInfo';
+      if (checkLaborItemCategory(productDetails) && enableInstallModsNewUx()) {
+        className = `${className} align-labor-line`;
+      }
+      return (
+        <ProductDetails
+          productDetails={productDetails}
+          line_behaviors={line_behaviors}
+          size="small"
+          textLimit={23}
+          modelTextLimit={7}
+          className={className}
+          isCratingLine={isCrateLine(row)}
+          calledFrom="order-details-productInfo-one"
+        >
+          <span
+            data-qtag-item-qty={productDetails.quantity}
+          >{`Qty: ${productDetails.quantity}`}</span>
+          {enableSchedulePickup && <ReturnPickuporderList row={row} />}
+          {isApplicable(row.is_reshipped_line) &&
+            <div className="redelivery-indicator">
+              <Icons type="reDeliveryTruck" color="rgb(0, 54, 178)" />
+              <div style={{ width: '111px' }}
+                className="redelivery-indicator-text"
+                data-testid="reshipped-line-indicator"
+              >
+                Reshipped Item
+              </div>
+            </div>
+          }
+          {isApplicable(row.is_original_line) &&
+            <div className="redelivery-indicator"
+              style={{
+                background: 'rgb(253, 240, 211)',
+                width: '103px'
+              }}>
+              <div className="redelivery-indicator-text"
+                style={{
+                  marginLeft: '0px',
+                  width: '91px'
+                }}
+                data-testid="reshipped-original-line-indicator"
+              >
+                Original Item
+              </div>
+            </div>
+          }
+          {isPriceUnlocked ? (
+            <Icons
+              type="lockOpen"
+              style={{
+                color: '#338700',
+                marginLeft: '6px',
+                height: '21px',
+                width: '21px',
+                verticalAlign: 'middle'
+              }}
+              data-testid="lock-open-icon"
+              data-qtag-table-unlock-icon={`item-id-${productDetails.item_id}`}
+            />
+          ) : null}
+          <ProductDetailsServices
+            productDetails={productDetails}
+            showQuantity
+          />
+        </ProductDetails>
+      );
+    }
+  },
+  {
+    key: orderDetailsTableHeaderConstants.type,
+    name: 'Fulfillment Type',
+    output(value, row) {
+      if (isDepositLine(row)) {
+        return DataNotAvailable;
+      }
+      if (enableVendorDeliveryFullfilmentType) {
+        const levelOfService = row?.levelOfServiceConfig;
+
+        if (levelOfService?.toUpperCase() === vendorTruckDelivery) {
+          return (
+            <div className="image_container">
+              <Icons
+                style={{
+                  transform: 'rotateY(180deg)'
+                }}
+                type="deliveryQueueTruck"
+              />
+              <div
+                data-testid="fullfilment-type-cell"
+                style={{
+                  display: 'inline',
+                  position: 'relative',
+                  bottom: '0.35rem',
+                  left: '0.15rem'
+                }}
+              >
+                {vendorFulfillmentDisplayName}
+              </div>
+            </div>
+          );
+        }
+      }
+      if (isGIGLine(value, row.carrier_service_code)) {
+        return (
+          <div className="image_container">
+            {row.type === 'Pickup Later (PL)' && <Icons type="Gig" color="rgb(0,0,0)" />}
+            <div
+              style={{
+                display: 'inline',
+                position: 'relative',
+                bottom: '0.35rem',
+                left: '0.15rem'
+              }}
+            >
+              Same-Day Driver Pickup
+            </div>
+          </div>
+        );
+      }
+      if (isInstaCartLine(value, row.carrier_service_code)) {
+        return (
+          <div className="image_container">
+            <div>
+              Instacart
+            </div>
+          </div>
+        );
+      }
+      if (value === 'Pickup Later (PL)') {
+        return (
+          <>
+            <div className="image_container">
+              {row.type === 'Pickup Later (PL)' && <Icons type="pickUp" color="rgb(0,0,0)" />}
+              <div
+                style={{
+                  display: 'inline',
+                  position: 'relative',
+                  bottom: '0.35rem',
+                  left: '0.15rem'
+                }}
+              >
+                {modifyFulfillmentTypeValue(value)}
+              </div>
+            </div>
+
+            <div style={{ color: 'grey', 'padding-left': '4px' }}>
+              {row.pickup_type || 'In Store'}
+            </div>
+          </>
+        );
+      }
+      if (value === 'Parcel Delivery (PD)') {
+        ; return (
+          <div className="image_container">
+            <Icons
+              style={{
+                transform: 'rotateY(180deg)'
+              }}
+              type="shipping"
+            />
+            <div className='fulfillment-type-text'>
+              {modifyFulfillmentTypeValue(value)}
+            </div>
+          </div>
+        );
+      }
+      if (
+        value === `Lowe's Delivery (LD)` ||
+        value === 'Direct Delivery (DD)'
+      ) {
+        return (
+          <div className="image_container">
+            <Icons
+              style={{
+                transform: 'rotateY(180deg)'
+              }}
+              type="shipping"
+            />
+            <div
+              style={{
+                display: 'inline',
+                position: 'relative',
+                bottom: '0.35rem',
+                left: '0.15rem'
+              }}
+            >
+              {modifyFulfillmentTypeValue(value)}
+            </div>
+          </div>
+        );
+      }
+      return fulfillmentType[value];
+    }
+  },
+  {
+    key: orderDetailsTableHeaderConstants.fulfillment_date,
+    name: 'Fulfillment Date',
+    output: fulfillmentDateOutput
+  },
+  {
+    key: orderDetailsTableHeaderConstants.fulfillment_location,
+    name: 'Fulfillment Location',
+    // function to show tooltip
+    tooltip(value, row) {
+      const rowData = { ...row };
+      return value !== DataNotAvailable && !isDepositLine(row) &&
+        (rowData.store_name || rowData.store_phone_no) ? (
+          <div style={{ width: '150px' }}>{`${rowData.store_name ||
+          ''}\n${rowData.store_phone_no || ''}`}</div>
+        ) : (
+          ''
+        );
+    },
+    output(value, row) {
+      if (isDepositLine(row)) {
+        return DataNotAvailable;
+      }
+      if (enableVendorDeliveryFullfilmentType) {
+        const levelOfService = row?.levelOfServiceConfig;
+        if (levelOfService?.toUpperCase() === vendorTruckDelivery) {
+          return <span data-testid='fullfilment-location-cell-value'>{vendorLocationDisplayName}</span>;
+        }
+      }
+      return value;
+    }
+  },
+  {
+    key: orderDetailsTableHeaderConstants.po_to_vendor,
+    name: 'PO #',
+    output(value, row) {
+      if (isDepositLine(row)) {
+        return DataNotAvailable;
+      }
+      return renderPONumberColumn(row);
+    }
+  },
+  {
+    key: orderDetailsTableHeaderConstants.invoice_no,
+    name: 'Invoice #',
+    // function to show tooltip
+    tooltip(value) {
+      const formattedValue = [...value];
+      let formattedText = '';
+      if (formattedValue.length > 1) {
+        formattedValue.shift();
+        formattedValue.forEach(val => {
+          formattedText += `${val} \n`;
+        });
+      }
+      return formattedText;
+    },
+    output(value, row) {
+      if (isDepositLine(row)) {
+        return DataNotAvailable;
+      }
+      return value.length > 1 ? `${value[0]}...` : value[0];
+    }
+  },
+  {
+    key: orderDetailsTableHeaderConstants.status,
+    name: 'Status',
+    output(value, row) {
+      // isitemLoaded flag decides whether to show "Item Loaded"
+      // tag on the order details screen or not
+      const isItemLoaded = row.line_status === orderLineStatusCodes.shipped &&
+        !!Number(row.productDetails.invoicedQuantity);
+
+      const isGigPizzaDeliveryTracker =
+        isApplicable(row?.carrier_service_code === gigDelivery);
+
+      const isInstacartTracker = isApplicable(row?.carrier_service_code === instaDelivery);
+      const isLDOrder = row?.delivery_method == loadTypeMapper.LD;
+
+      // Included Inline Styling
+      // REASON: To have the style in a stylesheet we need to import CSS file which can be a overhead for a CSS file.
+      return <>
+        <div>{value}</div>
+        {
+          isItemLoaded &&
+          <div className="redelivery-indicator"
+            style={{
+              width: '130px',
+              marginLeft: '0px',
+              marginTop: '4px'
+            }}
+          >
+            <div style={{ height: '24px', paddingTop: '6px' }}>
+              <Icons type="loadToTruck" color="rgb(0, 54, 178)"
+              />
+            </div>
+            <div
+              className="redelivery-indicator-text"
+              data-testid="loadToTruck-indicator"
+            >
+              Item loaded
+            </div>
+          </div>
+        }{isApplicable(row.has_redelivery_qty) &&
+          <div className="redelivery-indicator"
+            style={{
+              width: '130px',
+              marginLeft: '0px',
+              marginTop: '4px'
+            }}
+          >
+            <div style={{ height: '24px' }}>
+              <Icons type="reDeliveryTruck" />
+            </div>
+            <div
+              className="redelivery-indicator-text"
+              data-testid="redelivery-indicator"
+            >
+              Redelivery
+            </div>
+          </div>
+        }
+        {isDelTypeEligible(row.carrier_service_code) && row.refactoredFulDate !== UnscheduledAppointment &&
+          // We are not showing Pizza Tracker for unscheduled lines
+          <PizzaTracker
+            row={row}
+            isGigPizzaDeliveryTracker={isGigPizzaDeliveryTracker}
+            isInstacartTracker={isInstacartTracker}
+            isLDOrder={isLDOrder}
+          />
+        }
+      </>;
+    }
+  }
+]; */
