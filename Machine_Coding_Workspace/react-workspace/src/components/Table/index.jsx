@@ -6,8 +6,8 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector,useDispatch } from 'react-redux';
 // import { maxTabLimit } from '../../../containers/dashboard/common/constant';
 // import { maxTabsNotification, openNewTab } from '../../../containers/virtualTabs/store/actions';
-// import Body from './body';
 import Head from './head';
+import Body from './body';
 // import Pagination from './pagination';
 import './style.scss';
 // import { updateSessionData } from '../../../utils/common/commonUtilities';
@@ -54,7 +54,20 @@ export default function SortTable(props) {
       onSelectAll,
 
       // Accessibility
-      tabIndexValue
+      tabIndexValue,
+
+      // OrderLine or TableBody props
+      disableHover,
+      selectedRow,
+      rowKey,
+      selectedRowKey,
+      onRowSelect,
+      allowRowSelectionInGroup,
+      onlyFullCancellationAllowed,
+      serviceHeaders,
+      showGroupSeparator,
+      groupByProjects,
+      orderData
     } = props;
     // Cloned original props, so that it won't get modified in this or any of its child component
     const propsData = { ...props };
@@ -123,6 +136,8 @@ export default function SortTable(props) {
       return lines;
     };
 
+    const selectRowHandler = () => {};
+
     return (
     <Paper className={containerClasses}>
       <div className={classes} style={{ maxHeight: `${tableHeight}px` }} ref={tableRef}>
@@ -170,7 +185,7 @@ export default function SortTable(props) {
             hideSelectAllCheckbox={hideSelectAllCheckbox}
             // Props for table-row checkbox - end
           />
-          {/* {!showSkeleton && (
+          {!showSkeleton && (
             <Body
               tableData={tableData}
               disableHover={disableHover}
@@ -193,12 +208,12 @@ export default function SortTable(props) {
               showGroupSeparator={showGroupSeparator}
               selectRowHandler={selectRowHandler}
               groupByProjects={groupByProjects}
-              orderData={orderData}
+              // orderData={orderData}
               showCheckedIcon={showCheckedIcon}
               hideTableHeader={hideTableHeader}
-              showSSTIMileageFee={showSSTIMileageFee}
+              // showSSTIMileageFee={showSSTIMileageFee}
             />
-          )} */}
+          )}
         </MaterialTable>
         {showSkeleton &&
           [...Array(noOfRows)].map((_, index) => (

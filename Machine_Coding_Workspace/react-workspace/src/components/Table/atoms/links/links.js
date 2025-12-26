@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import MaterialLink from '@mui/material/Link';
-import { linksAttributes } from './attributes';
+import { linksAttributes } from '../attributes';
 
 const useStyles = makeStyles(() => ({
   root: {

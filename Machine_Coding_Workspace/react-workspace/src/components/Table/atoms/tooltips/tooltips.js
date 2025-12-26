@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import MaterialTooltip from '@mui/material/Tooltip';
-import { toolTipAttributes } from './attributes';
+import { toolTipAttributes } from '../attributes';
 
 
 
