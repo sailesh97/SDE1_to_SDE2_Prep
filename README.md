@@ -37,3 +37,15 @@
   4.7 where mouse is relased, means onMouseUp event triggered, in that event handler we can calculate x & y distance travelled and assign it to top & left property of abosolutely positioned circle.
   4.8 distance between two centers > (radius1 of c1 + radius2 of c2) : circles are not overlapping
   4.9 Maintain a state to determine whether circle is active. Means which circle was drawn last.
+
+
+
+5. DSA:
+  1. Solved easy questions of Araay from Striver SDE Sheet
+  2. Read about recursion concepts from Abdul Bari:
+    - Ascending phase
+    - Descending phase
+    - Types of recursion
+  3. Added notes to this repo.
+  4. TODO: Solve questions from striver sheet
+
