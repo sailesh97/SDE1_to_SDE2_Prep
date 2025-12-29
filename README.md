@@ -16,36 +16,33 @@
 
 ### In Progress
 1. Nested Checkbox Implementation:
-1.1. Failed because:
-   - Couldn't think of data structure in which the checkbox state should be stored
-   - Updating state of child nodes is relatively easy than updating parent's state.
-   - I thought, it should be solved using tree traversal algo. But recursion was easier approach. Tree traversal wasn't required
-  
+    1. Failed because:
+        - Couldn't think of data structure in which the checkbox state should be stored
+        - Updating state of child nodes is relatively easy than updating parent's state.
+        - I thought, it should be solved using tree traversal algo. But recursion was easier approach. Tree traversal wasn't required
 2. Star Rating: Completed
 3. Table:
-   3.1 Understood how to implement using render props
-   3.2 TODO: Yet to implement using html table tags, as doing it in material is increasing complexity
-   3.3 TODO: Read from articles about benefits of renderProps
+   1. Understood how to implement using render props
+   2. TODO: Yet to implement using html table tags, as doing it in material is increasing complexity
+   3. TODO: Read from articles about benefits of renderProps
 
-4. Overlapping circles: devtools.tech
-  4.1 onMouseDown
-  4.2 onMouseMove
-  4.3 onMouseUp
-  4.4 addEventListener('contextmenu'): prevent default
-  4.5 e.target.buttons:2 means right click and 1 means left click
-  4.6 clientX, clientY is the co-ordinates when mouse click happened
-  4.7 where mouse is relased, means onMouseUp event triggered, in that event handler we can calculate x & y distance travelled and assign it to top & left property of abosolutely positioned circle.
-  4.8 distance between two centers > (radius1 of c1 + radius2 of c2) : circles are not overlapping
-  4.9 Maintain a state to determine whether circle is active. Means which circle was drawn last.
+5. Overlapping circles: devtools.tech
+     1. onMouseDown
+     2. onMouseMove
+     3. onMouseUp
+     4. addEventListener('contextmenu'): prevent default
+     5. e.target.buttons:2 means right click and 1 means left click
+     6. clientX, clientY is the co-ordinates when mouse click happened
+     7. where mouse is relased, means onMouseUp event triggered, in that event handler we can calculate x & y distance travelled and assign it to top & left property of abosolutely positioned circle.
+     8. distance between two centers > (radius1 of c1 + radius2 of c2) : circles are not overlapping
+     9. Maintain a state to determine whether circle is active. Means which circle was drawn last.
 
-
-
-5. DSA:
-  1. Solved easy questions of Araay from Striver SDE Sheet
-  2. Read about recursion concepts from Abdul Bari:
-    - Ascending phase
-    - Descending phase
-    - Types of recursion
-  3. Added notes to this repo.
-  4. TODO: Solve questions from striver sheet
+6. DSA:
+     1. Solved easy questions of Araay from Striver SDE Sheet
+     2. Read about recursion concepts from Abdul Bari:
+        - Ascending phase
+        - Descending phase
+        - Types of recursion
+     3. Added notes to this repo.
+     4. TODO: Solve questions from striver sheet
 
