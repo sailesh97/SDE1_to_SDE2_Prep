@@ -244,7 +244,7 @@ export default function SortTable(props) {
 
               orderData={orderData} // Just to distinguish If order has project_id or quote_id, based on which we decide to show groups. Could have done that outside and pass only required info.
               // Show specific lines for mileage fees in different UX
-              showSSTIMileageFee={showSSTIMileageFee}
+              // showSSTIMileageFee={"showSSTIMileageFee"}
             />
           )}
         </MaterialTable>
