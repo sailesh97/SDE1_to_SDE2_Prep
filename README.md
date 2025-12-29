@@ -30,10 +30,10 @@
 4. Overlapping circles: devtools.tech
   4.1 onMouseDown
   4.2 onMouseMove
-   4.3 onMouseUp
-   4.4 addEventListener('contextmenu'): prevent default
-   4.5 e.target.buttons:2 means right click and 1 means left click
-   4.6 clientX, clientY is the co-ordinates when mouse click happened
-   4.7 where mouse is relased, means onMouseUp event triggered, in that event handler we can calculate x & y distance travelled and assign it to top & left property of abosolutely positioned circle.
-   4.8 distance between two centers > (radius1 of c1 + radius2 of c2) : circles are not overlapping
-   4.9 Maintain a state to determine whether circle is active. Means which circle was drawn last.
+  4.3 onMouseUp
+  4.4 addEventListener('contextmenu'): prevent default
+  4.5 e.target.buttons:2 means right click and 1 means left click
+  4.6 clientX, clientY is the co-ordinates when mouse click happened
+  4.7 where mouse is relased, means onMouseUp event triggered, in that event handler we can calculate x & y distance travelled and assign it to top & left property of abosolutely positioned circle.
+  4.8 distance between two centers > (radius1 of c1 + radius2 of c2) : circles are not overlapping
+  4.9 Maintain a state to determine whether circle is active. Means which circle was drawn last.
