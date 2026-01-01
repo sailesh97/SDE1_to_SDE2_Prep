@@ -1,112 +1,72 @@
-import checkboxData from "./chekboxdata";
-import "./NestedCheckBox.css";
 import { useState } from "react";
+import checkBoxesData from "./chekboxdata";
 
-const Checkbox = ({ data, checkedState, setCheckedState }) => {
-  /*  const handleParentNodes = (node, state) => {
-    if(!node.children){
-      return state[node.id] || false;
+/* Utility: collect all descendant ids */
+const getAllChildIds = (node) => {
+  let ids = [];
+  if (node.children) {
+    for (const child of node.children) {
+      ids.push(child.id);
+      ids = ids.concat(getAllChildIds(child));
     }
-    state[node.id] = node.children.every(n => {
-      return handleParentNodes(n, state);
-    });
-    console.log('nodeid, state--', node.name, node.id, state[node.id])
-    return state;
-  } */
+  }
+  return ids;
+};
 
-  const updateAllChildNodes = (box, isChecked) => {
-    let newState = {};
+/* Utility: check if all children are selected */
+const areAllChildrenChecked = (node, selectedIds) => {
+  if (!node.children) return false;
+  return node.children.every(
+    (child) =>
+      selectedIds.has(child.id) &&
+      areAllChildrenChecked(child, selectedIds) !== false
+  );
+};
 
-    if (box.children) {
-      box.children.forEach((element) => {
-        newState = {
-          ...newState,
-          [box.id]: isChecked,
-          ...updateAllChildNodes(element, isChecked),
-        };
-      });
+const CheckboxTree = ({ data }) => {
+  const [selectedIds, setSelectedIds] = useState(new Set());
+
+  const handleToggle = (node, isChecked) => {
+    const newSelected = new Set(selectedIds);
+
+    if (isChecked) {
+      // Check node + all children
+      newSelected.add(node.id);
+      getAllChildIds(node).forEach((id) => newSelected.add(id));
     } else {
-      newState = {
-        ...newState,
-        [box.id]: isChecked,
-      };
+      // Uncheck node + all children
+      newSelected.delete(node.id);
+      getAllChildIds(node).forEach((id) => newSelected.delete(id));
     }
-    return newState;
+
+    setSelectedIds(newSelected);
   };
 
-  const handleParentNodes = (state) => {
-    const dfs = (node) => {
-      // leaf node
-      if (!node.children) {
-        return state[node.id] || false;
-      }
+  const renderNode = (node) => {
+    const isChecked =
+      selectedIds.has(node.id) ||
+      areAllChildrenChecked(node, selectedIds);
 
-      // check all children
-      const allChecked = node.children.every((child) => dfs(child));
+    return (
+      <div key={node.id} style={{ marginLeft: 20 }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={(e) => handleToggle(node, e.target.checked)}
+          />
+          {node.name}
+        </label>
 
-      state[node.id] = allChecked;
-      return allChecked;
-    };
-
-    checkboxData.forEach((node) => dfs(node));
+        {node.children &&
+          node.children.map((child) => renderNode(child))}
+      </div>
+    );
   };
 
-  const updateState = (e, box) => {
-    const isChecked = e.target.checked;
-    const id = e.target.id;
-    setCheckedState((prevState) => {
-      const newState = { ...prevState, [id]: isChecked };
-      const state = updateAllChildNodes(box, isChecked);
-      const updatedState = {
-        ...newState,
-        ...state,
-      };
-      handleParentNodes(updatedState);
-      return updatedState;
-    });
-  };
-
-  console.log("checkedState", checkedState);
-  return (
-    <div>
-      {data.map((box) => {
-        return (
-          <div className="container">
-            {
-              <span>
-                <input
-                  type="checkbox"
-                  checked={checkedState[box.id] || false}
-                  id={box.id}
-                  onChange={(e) => updateState(e, box)}
-                />
-                {box.name}
-              </span>
-            }
-            {box.children && (
-              <Checkbox
-                data={box.children}
-                checkedState={checkedState}
-                setCheckedState={setCheckedState}
-              />
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+  return <div>{data.map(renderNode)}</div>;
 };
 
-const NestedCheckbox = () => {
-  const [checkedState, setCheckedState] = useState({});
-
-  return (
-    <Checkbox
-      data={checkboxData}
-      checkedState={checkedState}
-      setCheckedState={setCheckedState}
-    />
-  );
-};
-
-export default NestedCheckbox;
+export default function App() {
+  return <CheckboxTree data={checkBoxesData} />;
+}
