@@ -36,4 +36,3 @@ const mergeSortedArrays = (arr1, arr2) => {
 const sortedArray1 = [3, 8, 16, 20, 25, 28, 30];
 const sortedArray2 = [4, 10, 12, 22, 23];
 console.log(mergeSortedArrays(sortedArray1, sortedArray2));
-;
