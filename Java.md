@@ -162,3 +162,19 @@ For that we need JDK : Java Development Kit.
 JDK has compiler resposible for converting .java to .class.
 
 - All 3 JDK, JRE and JVM are platform dependent
+
+
+### Other terms you should know:
+- JSE : Java Standard Edition 
+    - Core Java
+- JEE : Java Enterprise Edition / Jakarta EE:
+    - JSE + Other APIs
+    - Other APIs involves:
+        - Transactional APIs (Rollback, Commit)
+        - Servlets
+        - JSP
+        - Persistent API - To manage relational DB
+    - Useful for building large scale apps like, e-commerce
+
+- JME : Java Micro/Mobile Edition
+    - JSE + APIs for building mobile apps
