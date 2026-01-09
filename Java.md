@@ -189,6 +189,7 @@ JDK has compiler resposible for converting .java to .class.
     2. Methods
     3. Constructors
     4. Nested Class
+4. main() is the starting point of the program
 
 ```
 Employee.java
