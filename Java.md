@@ -178,3 +178,30 @@ JDK has compiler resposible for converting .java to .class.
 
 - JME : Java Micro/Mobile Edition
     - JSE + APIs for building mobile apps
+
+### First program:
+
+##### Rules:
+1. Classname should be same as file name
+2. One java file can have only one public **class**.
+3. A class can have:
+    1. Variables
+    2. Methods
+    3. Constructors
+    4. Nested Class
+
+```
+Employee.java
+public statc void main(){}
+```
+
+##### Structure of a class:
+
+public: 
+When .java is compiled to byecode (.class) and passed to JVM, JVM calls the main function of the class file and as JVM is outside the class and directory we have to make main() as a publicly available function to outsiders.
+
+static:
+We don't need to create objects of a class to invoke Static members of a class.
+JVM doesn't need to create an object of Employee class to call its main function
+
+void: return type
