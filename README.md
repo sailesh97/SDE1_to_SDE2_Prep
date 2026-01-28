@@ -48,3 +48,11 @@
      3. Added notes to this repo.
      4. TODO: Solve questions from striver sheet
 
+Resources
+
+Big Frontend Dev
+
+Dev N Drive Insta Channel
+
+GreatFrontend
+
