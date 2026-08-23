@@ -32,3 +32,11 @@ https://ubuntu.com/wsl/docs/stable/?_gl=1*dhvmkm*_gcl_au*MTM5NTI1NDQ0NS4xNzg3NDA
 Default Unix user account: sailesh_patra
 password: root
 -----
+
+----
+supabase pwd: n6Ln8kFvg4AJDQ57
+----
+
+```
+aws pwd: Sailesh@21101997
+````
