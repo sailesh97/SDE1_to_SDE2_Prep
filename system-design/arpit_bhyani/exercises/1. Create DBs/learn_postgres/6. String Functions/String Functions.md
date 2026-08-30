@@ -1,3 +1,8 @@
+We can use one string function inside another.
+
+
+Can be used after where clause as well.
+
 #### concat_ & concat_ws
 select concat(fname,
  '-', lname) as FullName, dept
