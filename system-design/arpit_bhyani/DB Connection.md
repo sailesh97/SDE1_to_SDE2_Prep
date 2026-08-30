@@ -4,6 +4,15 @@ sailesh
 ```
 
 ```
+Login to postgres from terminal
+ psql -U postgres
+ pwd: sailesh
+
+Databases available in Postgres
+ select datname from pg_database;
+```
+
+```
 mongodb://localhost:27017
 
 use("School")
