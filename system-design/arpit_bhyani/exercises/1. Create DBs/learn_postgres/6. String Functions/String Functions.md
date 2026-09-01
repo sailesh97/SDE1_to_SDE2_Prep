@@ -4,6 +4,8 @@ We can use one string function inside another.
 Can be used after where clause as well.
 
 #### concat_ & concat_ws
+
+concat_ws stands for concat with separator.
 select concat(fname,
  '-', lname) as FullName, dept
  from employees;
@@ -45,7 +47,7 @@ ept from employees;
  Vijay:Nair   | Marketing
 (10 rows)
 
-#### SUBSTRING
+#### Use SUBSTR to extract Substring
 
  SELECT SUBSTR('Hello Buddy!',1,6) as NewString;
  
@@ -56,11 +58,13 @@ Output:
 
 (1 row)
 
+- SUBSTR('Hello Buddy!',1,6) : OP is "Hello "
+Extract from Start char(1st) to End+1 char i.e; 6+1 =7
 
 #### REPLACE
 
 Select REPLACE(dept, 'IT', 'TECH') from employees;
-
+IT is replaced with TECH
 
 #### REVERSE:
 
