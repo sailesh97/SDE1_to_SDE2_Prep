@@ -48,7 +48,7 @@ ept from employees;
 (10 rows)
 
 #### Use SUBSTR to extract Substring
-
+1-based index, not 0-based like arrays
  SELECT SUBSTR('Hello Buddy!',1,6) as NewString;
  
 Output:
