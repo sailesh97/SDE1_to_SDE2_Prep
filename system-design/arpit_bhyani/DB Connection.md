@@ -47,5 +47,8 @@ supabase pwd: n6Ln8kFvg4AJDQ57
 ----
 
 ```
-aws pwd: Sailesh@21101997
+https://docs.aws.amazon.com/accounts/latest/reference/managing-accounts-india.html?utm_source=chatgpt.com#manage-verification
+https://us-east-1.console.aws.amazon.com/billing/home?region=us-east-1#/account/customer-verification
+https://github.com/aws-samples/sample-developer-tutorials/blob/main/tuts/013-ec2-basics/ec2-basics.md
+
 ````
