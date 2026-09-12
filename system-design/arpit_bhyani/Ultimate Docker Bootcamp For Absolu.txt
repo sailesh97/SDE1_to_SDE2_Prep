@@ -64,10 +64,9 @@ Corrected timestamps:
 	22.26 docker help command (03:27:22)
 	22.27 docker image prune (03:27:43)
 	22.28 Practice (03:27:59)
-
-
-
+	22.30 Setup VS Code (The IDE) - Installing the Docker Extension
 23.  Creating Custom Docker Files (03:40:00)
+	23.1 
 24.  Expose and Copy Instructions (04:10:45)
 25.  Docker Images and Docker Registry (04:56:02)
 26.  Docker Images (04:56:36)
