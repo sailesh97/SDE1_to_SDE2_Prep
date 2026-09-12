@@ -51,11 +51,22 @@ Corrected timestamps:
 	22.15 docker run (02:56:54)
 	22.16 docker run -it option (02:58:42)
 	22.17 Locating the docker image (03:00:00)
-	22.18
-	22.19 docker run -rm options (03:01:46)
-	22.20 docker run -it --rm options
-	22.21 Practice docker run (22.15 to 22.20) 
-	22.22
+	22.18 docker run -rm options (03:01:46)
+	22.19 docker run -it --rm options (03:03:00)
+	22.20 Practice docker run (22.15 to 22.20) (03:03:30)
+		22.20.0. Other practical
+		22.20.1 Install & Use Python inside a docker container (03:11:50)
+	22.21 docker inspect (03:16:46)
+	22.22 Practice docker inspect (03:18:18)
+	22.23 docker rm command (03:25:08)
+	22.24 docker rmi command (03:26:14)
+	22.25 docker logs command (03:26:43)
+	22.26 docker help command (03:27:22)
+	22.27 docker image prune (03:27:43)
+	22.28 Practice (03:27:59)
+
+
+
 23.  Creating Custom Docker Files (03:40:00)
 24.  Expose and Copy Instructions (04:10:45)
 25.  Docker Images and Docker Registry (04:56:02)
