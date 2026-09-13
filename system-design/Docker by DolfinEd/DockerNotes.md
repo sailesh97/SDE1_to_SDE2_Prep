@@ -43,5 +43,27 @@
 ![alt text](./dockerNotesImages/14.%20dockerRun%20-it%20option.png)
 
 
+### <u>xvi. Locating the docker image </u>
+![alt text](./dockerNotesImages/15.%20LocatingTheDockerImage.png)
 
+### <u>xvii. docker run -rm -it</u>
+![alt text](./dockerNotesImages/16.%20dockerRun%20-rm%20-it%20option.png)
+
+### <u>xviii. docker inspect</u>
+![alt text](./dockerNotesImages/17.%20dockerInspect.png)
+
+### <u>xviv. docker rm</u>
+![alt text](./dockerNotesImages/18.%20dockerRm.png)
+
+### <u>xv. docker rmi</u>
+![alt text](./dockerNotesImages/19.%20dockerRmi.png)
+
+### <u>xvi. docker logs</u>
+![alt text](./dockerNotesImages/20.%20dockerLogs.png)
+
+### <u>xvii. docker help</u>
+![alt text](./dockerNotesImages/21.%20dockerHelp.png)
+
+### <u>xviii. docker image prune</u>
+![alt text](./dockerNotesImages/22.%20dockerImagePrune.png)
 
