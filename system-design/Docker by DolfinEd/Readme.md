@@ -37,6 +37,7 @@
 ![alt text](./dockerNotesImages/12.%20dockerExec%20-it%20opening%20a%20termminal%20inside%20the%20container.png)
 
 #### <u>xiv. docker run </u>
+docker run is equivalent to docker pull + create + start
 ![alt text](./dockerNotesImages/13.%20dockerRun.png)
 
 #### <u>xv. docker run -it </u>
@@ -46,7 +47,7 @@
 ### <u>xvi. Locating the docker image </u>
 ![alt text](./dockerNotesImages/15.%20LocatingTheDockerImage.png)
 
-### <u>xvii. docker run -rm -it</u>
+### <u>xvii. docker run --rm -it</u>
 ![alt text](./dockerNotesImages/16.%20dockerRun%20-rm%20-it%20option.png)
 
 ### <u>xviii. docker inspect</u>
