@@ -3,45 +3,67 @@
 #### <u>i. docker pull </u>
 ![alt text](./dockerNotesImages/1.%20dockerPull.png)
 
-2
+#### <u>ii. docker images </u>
 ![alt text](./dockerNotesImages/2.%20dockerImages.png)
 
-3
+#### <u>iii. docker ps </u>
 ![alt text](./dockerNotesImages/3.%20dockerPS.png)
 
-4
+#### <u>iv. docker create </u>
 ![alt text](./dockerNotesImages/4.%20dockerCreate.png)
 
-5
+#### <u>v. docker start </u>
 ![alt text](./dockerNotesImages/5.%20dockerStart.png)
 
-6
+#### <u>vi. docker stop </u>
 ![alt text](./dockerNotesImages/6.%20dockerStop.png)
 
-7
+#### <u>viii. Linux ps command</u>
 ![alt text](./dockerNotesImages/7.%20Linux%20PS%20commands.png)
 
-8
+#### <u>ix. ps aux </u>
 ![alt text](./dockerNotesImages/8.%20ps%20aux%20grep.png)
 
-9
+#### <u>x. docker exec </u>
 ![alt text](./dockerNotesImages/9.%20dockerExec.png)
 
-10
+#### <u>xi. docker exec -t </u>
 ![alt text](./dockerNotesImages/10.%20dockerExec%20-t%20option.png)
 
-11
+#### <u>xii. docker exec -i </u>
 ![alt text](./dockerNotesImages/11.%20dockerExec%20-i%20option.png)
 
-12
+#### <u>xiii. docker exec -it : Opening terminal inside the container </u>
 ![alt text](./dockerNotesImages/12.%20dockerExec%20-it%20opening%20a%20termminal%20inside%20the%20container.png)
 
-13
+#### <u>xiv. docker run </u>
 ![alt text](./dockerNotesImages/13.%20dockerRun.png)
 
-14
+#### <u>xv. docker run -it </u>
 ![alt text](./dockerNotesImages/14.%20dockerRun%20-it%20option.png)
 
 
+### <u>xvi. Locating the docker image </u>
+![alt text](./dockerNotesImages/15.%20LocatingTheDockerImage.png)
 
+### <u>xvii. docker run -rm -it</u>
+![alt text](./dockerNotesImages/16.%20dockerRun%20-rm%20-it%20option.png)
+
+### <u>xviii. docker inspect</u>
+![alt text](./dockerNotesImages/17.%20dockerInspect.png)
+
+### <u>xviv. docker rm</u>
+![alt text](./dockerNotesImages/18.%20dockerRm.png)
+
+### <u>xv. docker rmi</u>
+![alt text](./dockerNotesImages/19.%20dockerRmi.png)
+
+### <u>xvi. docker logs</u>
+![alt text](./dockerNotesImages/20.%20dockerLogs.png)
+
+### <u>xvii. docker help</u>
+![alt text](./dockerNotesImages/21.%20dockerHelp.png)
+
+### <u>xviii. docker image prune</u>
+![alt text](./dockerNotesImages/22.%20dockerImagePrune.png)
 
