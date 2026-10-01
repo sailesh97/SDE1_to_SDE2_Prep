@@ -1,0 +1,75 @@
+######################################################################################### Named Docker Volumes and default container behavior ##############
+##############################################################################
+
+<!-- Objective:
+Demonstrate the named Docker volumes behavior when attached to a container.
+We will test this when the Docker volume has no data and when it does have data to see if this makes any difference -->
+
+# Important note: nginx image uses the path /usr/share/nginx/html inside the image and container as the root document. Where it stores the static and html files.
+
+# Clean up your Docker host from any previous containers to avoid conflicts in names or ports.
+
+# Create two named Docker volumes empty-vol and data-vol
+$ docker volume create empty-vol
+$ docker volume create data-vol 
+
+# Inspect the data-vol to find its system path
+$ docker volume inspect data-vol
+# copy the path /var/lib/docker/volumes/data-vol/_data
+
+# Create a file under this path test.txt and echo the phrase "Hi there"
+$ echo "Hi there" > /var/lib/docker/volumes/data-vol/_data/test.txt
+
+# Check that the file was created
+$ cat /var/lib/docker/volumes/data-vol/_data/test.txt
+
+
+# Now we have an empty volume empty-vol and a data volume data-vol
+
+
+# To check the nginx behavior without any name volume  mounts, create a container with the name novol-cont in detached mode, map port 80 on the host to the container port 80, this will run the default nginx command
+$ docker run -d --name  novol-cont -p 80:80 nginx
+
+# # Start an exec interactive shell into the container
+$ docker exec -it novol-cont bash
+
+# Check the content of the /usr/share/nginx/html directory
+$ ls /usr/share/nginx/html
+# you should see the index.html file and 50x.html in the folder
+
+# Copy the public IPv4 IP address of the EC2 Docker host, and browse to port 80 on the Docker host, you should see the default nginx html page
+
+
+# Now, we will test with volume mount. First, we will test with the empty-vol as the volume.
+# Create an nginx container, empty-cont in detached mode and mount the empty-vol to the nginx root document path /usr/share/nginx/html. map host port 8000 to the container port 80
+
+$ docker run -d --name empty-cont -p 8000:80 -v empty-vol:/usr/share/nginx/html nginx
+
+# Start an exec interactive shell into the container
+$ docker exec -it empty-cont bash
+
+# Check the content of the /usr/share/nginx/html directory
+$ ls /usr/share/nginx/html
+# You should see the same index.html and 50x.html files. This is because the empty volume makes Docker copy the /usr/share/nginx/html content in the container to the empty volume.
+
+# Copy the public IPv4 IP address of the EC2 Docker host, and browse to port 8000 on the Docker host, you should get the same response as default nginx without a volume attached.
+
+
+# Now, lets test with the data-vol. Create an nginx container with the name data-cont using in detached mode and mount the volume data-vol to the nginx root document path /usr/share/nginx/html. map host port 9000 to the container port 80
+
+$ docker run -d --name data-cont -p 9000:80 -v data-vol:/usr/share/nginx/html nginx
+
+# Start an exec interactive shell into the container
+$ docker exec -it data-cont bash
+
+# Check the content of the /usr/share/nginx/html directory
+$ ls /usr/share/nginx/html
+# You should see the file test.txt and no html files. This is because the volume with pre-existing data will overwrite the contents of the /usr/share/nginx/html directory in the container. 
+
+# Copy the public IPv4 IP address of the EC2 Docker host, and browse to port 80 on the Docker host, you should get an nginx 403 forbidden error, as nginx cannot find the index.html page to respond to the http request.
+
+
+# Clean up. Delete all the images and host paths (empty-vol and data-vol) created
+
+#### Conclusion #####
+# Named Docker volumes with data in them will overwrite the default content in the container at the container's mount path.

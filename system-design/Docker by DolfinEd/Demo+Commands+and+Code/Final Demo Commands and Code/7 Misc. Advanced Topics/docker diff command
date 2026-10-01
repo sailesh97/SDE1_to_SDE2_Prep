@@ -1,0 +1,18 @@
+
+#################################
+##### docker diff command #######
+
+# create a container using nginx image in detached mode
+$ docker run --name test-nginx -d nginx
+
+# Use echo commands to create a file test.txt and redirect the output to the file
+
+$ docker exec test-nginx sh -c "echo 'Hello' > /usr/share/nginx/html/test.txt"
+
+# use the command docker diff to list the changes made to the container file system
+docker diff test-nginx
+
+# you should see, A  /usr/share/nginx/html/test.txt
+# this indicates that the mentioned file has been added to the file system
+
+

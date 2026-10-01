@@ -1,0 +1,36 @@
+############################################################################################### Working with Image Digests #################################
+##############################################################################
+
+
+# Inspect nginx image that you have on your docker host. If you do not have it you can pull it from Docker Hub
+
+$ docker pull nginx:latest
+
+$ docker image inspect nginx:latest
+# Look in the output for RepoDigests or use | grep RepoDigests
+$ docker image nginx:latest --format='{{index .RepoDigests 0}}'
+
+# you can also use the command
+
+$ docker image inspect nginx:latest --format='{{index .RepoDigests 0}}'
+
+# Now, create a docker file that will make use of the image digest
+
+$ nano Dockerfile
+
+FROM nginx@sha256........ # Replace with the digest out in the previos step
+EXPOSE 80
+
+# Save the file
+
+# Build a docker image that uses the Dockerfile
+
+$ docker build -t nginx-digest .
+
+# Now, use the image to launch an nginx container in detached mode with a port mapping of 80:80
+$ docker run -d -p 80:80 nginx-digest
+
+# In a browser window, open an HTTP request to the Public IPv4 address of the Docker Host, you should see the default nginx page.
+
+# This confirms that we can use the Image digest instead of image tags when we build Dockerfiles.
+

@@ -1,0 +1,197 @@
+##################################################
+############## Demo Docker Volume ################
+##################################################
+
+# Lab Objectives:
+# 1- Create a Docker volume 
+# 2- Run the first Container with the volume attached  
+# 3- Run a second Container with the same volume attached
+# 4- Access files in the volume from the two containers
+# 5- Demonstrate the Read only Option
+
+# Create a volume with the name volume1
+$ docker volume create volume1
+
+# Verify the volume is created
+$ docker volume ls
+
+# Go through the volume details
+$ docker inspect volume1
+
+# Create a container from busybox image, attach the above volume to it at the /data directory of the container. Excute the command echo Hello and redirect it to a file hello.txt in the /data directory of the container.
+
+docker run --rm -v volume1:/data ubuntu bash -c "echo 'Hello From Docker Volume' > /data/hello.txt"
+# Please note the redirection is to /data folder to make sure the file will be on the volume
+
+# the --rm will remove this container immediately after executing the command. If you want to keep the container, omit the --rm from the command.
+
+# use the docker ps and docker ps -a to check that the container does not exist anymore
+
+
+# Now, lets create another container that will attach the volume volume1 again at the same container path /data and execute the command bash
+docker run -it --rm -v volume1:/data ubuntu bash
+
+# use ls to check if you have the /data directory
+ls
+
+# You should see the sentence "Hello From  Docker Volume!", which proves that the volume is independent of the containers' lifecycle.
+
+
+# Verify that the container is removed by running docker ps and docker ps -a
+
+# If you are working on AWS for the EC2 Ubuntu Docker host, on the EC2 instance docker host, run the command
+$ cat /var/lib/docker/volumes/volume1/_data/hello.txt
+
+# You should see the "Hello From Docker Volume!". This proves that the Docker volume is on the host and not on the container that is already removed by the --rm option.
+
+
+
+##############################################################
+####### Sharing a Volume among Multiple Containers ###########
+##############################################################
+
+
+# Lets create a volume volume2
+$ docker volume create volume2
+
+# Verify that it has been created
+$ docker volume ls
+
+# Go through the volume details
+$ docker inspect volume2
+
+# Let's create an ubuntu container and attach the volume to it. Launch the container in detached mode and interactive shell (we'll need it later). Map the volume to folder1 in the container
+$ docker run -itd --name cont1 -v volume2:/folder1 ubuntu
+
+# Verify that the container is running
+$ docker ps
+
+# Inspect the container and check the mount section in the details
+$ docker inspect cont1 
+# You should expect an output similar to this:
+
+  #       "Mounts": [
+  #           {
+  #               "Type": "volume",
+  #               "Name": "volume1",
+  #               "Source": "/var/lib/docker/volumes/volume2/_data",
+  #               "Destination": "/folder1",
+  #               "Driver": "local",
+  #               "Mode": "z",
+  #               "RW": true,
+
+# Lets now get into the container shell, create a file in the /folder1 directory
+
+$ docker exec -it cont1 bash
+
+# Verify the working directory. You should be in the root directory /
+$ pwd
+
+# Change directory into folder1
+$ cd /folder1
+
+# Create a cont1.txt file and redirect the message "Hello from cont1" using echo command.
+$ echo "Hello from cont1" > cont1.txt
+
+# Verify that the file exists
+$ ls 
+
+# Check its content
+$ cat cont1.txt
+
+# Exit from cont1
+Exit
+
+
+# Now, lets create a second container, cont2, from an ubuntu image. Lets mount the same volume, volume2 at the folder /folder2 inside cont2. Start the container in detached mode. 
+
+$ docker run -itd --name cont2 -v volume2:/folder2 ubuntu
+
+
+# Verify that the container is running
+$ docker ps
+
+# Inspect the container and check the mount section in the details
+$ docekr inspect cont2
+# You should expect an output similar to this:
+
+  #       "Mounts": [
+  #           {
+  #               "Type": "volume",
+  #               "Name": "volume1",
+  #               "Source": "/var/lib/docker/volumes/volume2/_data",
+  #               "Destination": "/folder2",
+  #               "Driver": "local",
+  #               "Mode": "z",
+  #               "RW": true,
+
+# Lets now get into the container shell, create a file in the /folder2 directory
+
+$ docker exec -it cont2 bash
+
+# Verify the working directory. You should be in the root directory /
+$ pwd
+
+# Change directory into folder2
+$ cd /folder2
+
+# Check what is in the folder
+$ ls
+# You should see the file cont1.txt that we created earlier using cont1 before we exited that container. This means, the cont1.txt was created on the volume and not on the container itself.
+
+# Now, lets create a file cont2.txt and redirect the message "Hello, this is from Cont2" using the echo command
+
+$ echo "Hello from cont2" > cont2.txt
+
+# Now exit cont2
+
+# If you are working on AWS for the EC2 Ubuntu Docker host, on the EC2 instance docker host, run the command
+$ ls /var/lib/docker/volumes/volume2/_data/
+
+
+##############################################
+######## Working with Read Only Option #######
+##############################################
+
+
+# Now, lets create a third container, cont3, from an ubuntu image. Lets mount the same volume, volume1 at the folder /folder3 inside cont3. Start the container in detached mode. 
+
+$ docker run -it -d --name cont3 -v volume2:/folder3:ro ubuntu
+
+
+# Verify that the container is running
+$ docker ps
+
+# Inspect the container and check the mount section in the details
+$ docekr inspect cont3
+# You should expect an output similar to this:
+
+  #       "Mounts": [
+  #           {
+  #               "Type": "volume",
+  #               "Name": "volume1",
+  #               "Source": "/var/lib/docker/volumes/volume2/_data",
+  #               "Destination": "/folder3",
+  #               "Driver": "local",
+  #               "Mode": "z",
+  #               "RW": false,
+
+# Notice that the last line, RW is false, this is because we used the :ro option
+
+# Lets get into the container shell and head to /folder3
+
+$ docker exec -it cont3 bash
+$ cd /folder3
+
+# Lets find out the content of this folder
+$ ls
+
+# Can you create a file 
+$ mkdir cont3
+# You will get an error including : Read-only file system. This is because cont3 has read-only permissions on volume1.
+
+
+# lets clean up!. Remove the 3 containers cont1, cont2, and cont3. Also, delete teh volume volume1
+
+$ docker rm -f cont1 cont2 cont3
+$ docker volume rm volume1

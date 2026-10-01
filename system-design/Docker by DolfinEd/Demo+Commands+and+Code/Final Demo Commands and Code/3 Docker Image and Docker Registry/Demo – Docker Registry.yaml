@@ -1,0 +1,116 @@
+#################### Docker Registry ####################
+
+####### Head to docker.io or dockerhub.com and create an account
+
+
+##############################################################################
+############################# Public  Registry ###############################
+
+# We will use the newimage that we created in the docker images lab, and we need to push it to docker hub #
+
+docker login
+# Log in to a Docker registry
+
+docker tag local-image:tagname [username-account]/new-repo:tag_name
+# To prepare to push an image to a registry, the commands creates a new image name/tag. The new image name that must include the username of the registry account and the repo in that registry where the image will be pushed.
+
+docker push [username-account]/new-repo:tag_name
+# Push the image to docker hub
+
+
+
+$ docker tag newimage  dolfined/public-repo1  # latest #
+$ docker tag newimage  dolfined/public-repo1:v1 
+
+$ docker images 
+# You can see a new image reference is created with the account-user/repo (dolfined/public-repo1) and the tag (Version) you specified.
+
+# Lets try to push this new image reference using the docker push command
+# to make sure they are both the same, check the image ID for the newimage and the dolfined/public-repo1, you will see the same image ID for both.
+
+$ docker push dolfined/public-repo1 
+
+# you will get an error "access denied" since you are not logged into the dockerhub account.
+
+# To login to dockerhub
+$ docker login
+# You will be prompted to enter a dockerhub username and password
+
+# Now, try the push again
+$ docker push dolfined/public-repo1 
+$ docker push dolfined/public-repo1:v1 
+### Head to the dockerhub account and refresh the page. You shoul see a new repo with the name public-repo1, you should also see the images uploaded.
+
+
+$ docker logout
+
+# Lets delete the dolfined/public-repo1:v1 and try to pull it from dockerhub
+$ docker rmi -f dolfined/public-repo1:v1
+
+# verify that it has been removed using docker images
+
+# Pull the image from docker hub
+$ docker pull dolfined/public-repo1:v1
+
+# use docker images for verification
+$ docker images
+# validate that the image is pulled
+
+# use docker history to check the image layers
+$ docker history dolfined/public-repo1:v1
+
+
+##############################################################################
+############################# Private Registry ###############################
+
+# Head to docker Hub to create a private registry private-repo1
+
+## We will repeat the same steps done before, but this time with the private registry
+
+
+$ docker tag newimage  dolfined/private-repo1  # latest #
+$ docker tag newimage  dolfined/private-repo1:v1 
+
+$ docker images 
+# You can see a new image reference is created with the account-user/repo (dolfined/public-repo1) and the tag (Version) you specified.
+
+# Lets try to push this new image reference using the docker push command
+# to make sure they are both the same, check the image ID for the newimage and the dolfined/public-repo1, you will see the same image ID for both.
+
+$ docker push dolfined/private-repo1 
+
+# you will get an error "access denied" since you are not logged into the dockerhub account.
+
+# To login to dockerhub
+$ docker login
+# You will be prompted to enter a dockerhub username and password
+
+# Now, try the push again
+$ docker push dolfined/private-repo1 
+$ docker push dolfined/private-repo1:v1 
+### Head to the dockerhub account and refresh the page. You shoul see a new repo with the name public-repo1, you should also see the images uploaded.
+
+
+# Lets delete the dolfined/public-repo1:v1 and try to pull it from dockerhub
+$ docker rmi -f dolfined/private-repo1:v1
+
+# verify that it has been removed using docker images
+
+# Pull the image from docker hub
+$ docker pull dolfined/private-repo1:v1
+
+# use docker images for verification
+$ docker images
+# validate that the image is pulled
+
+# use docker history to check the image layers
+$ docker history dolfined/private-repo1:v1
+
+############ END ###########
+
+
+
+
+
+
+

@@ -1,0 +1,354 @@
+
+####################################################################
+############# Single Container  Docker Compose File ################
+
+
+# Create A docker compose configuration file
+# Define a web tier container from Nginx image that will will have a host port mapping of 8000:80, the container name is dolfined
+
+ 
+# in VS Code, create the compose configuration file below
+# Services refer to containers
+
+services:
+  web:
+    image: nginx
+    container_name: dolfined
+    ports:
+      - "8080:80"
+---
+
+# Copy this content from VS Code and lets create a docker-compose.yml in the Docker host. Use vim or nano for that.
+
+$ nano docker-compose.yml
+# Paste the VS code above and save the file
+
+
+# Lets start the container using docker compose in detached mode
+$ docker compose up -d
+# As you can see it has started a new bridge network "ubuntu_default" to which the container will be attached.
+
+# To verify, use
+$ docker network ls
+# you will find the ubuntu-default bridge network created by docker compose
+
+# Verify the container is created using the command
+$ docker ps
+
+# From the aws console, copy the public IPv4 address of the docker host. Open a new browser and start an http session to that IP address on port 8080
+
+http"//<EC2 Docker host IPv4 address>:8080
+# You should be able to see the default Nginx page
+
+
+# You can stop the docker compose container using the command
+$ docker compose stop
+
+# When needed, you can start the docker compose container again using the command
+$ docker compose start
+
+
+##### Lets now check the network that was created by docker compose
+$ docker network ls
+# You should be able to see the ubuntu_default network which was created by docker compose.
+
+# Lets inspect this network
+$ docker network inspect ububtu_default
+
+
+# Lets now verify that the container is attached to the network
+$ docker inspect dolfined
+# Check the network attachment for the container, it should be network ubuntu
+
+# You can delete the docker compose container using the command, 
+$ docker compose down
+# This will remove the container(s) and the Ubuntu_default bridge network that was created by docker copose.
+
+
+
+
+####################################################################
+############# Multiple Containers Docker Compose File ##############
+
+# Create a second docker compose configuration file to create a second nginx container 
+# It is easier to write this in VS Code then we can copy paste into the file in the Docker host
+
+$ nano docker-compose.yml
+---
+services:
+  web:
+    image: nginx
+    container_name: dolfined
+    ports:
+      - "8080:80"
+  frontend:
+    image: nginx
+    container_name: dolfined2
+    ports:
+      - "4000:80"
+---
+# Save the file
+
+
+# Start the docker compose containers
+$ docker compose up -d
+
+# List the running containers
+$ docker ps
+
+# If you want to check the docker compose containers only, you can use the command
+$ docker compose ps
+
+# From the aws console, copy the public IPv4 address of the docker host. Open a new browser and start an http session to that IP address on port 8080
+
+# Access the dolfined container
+http"//<EC2 Docker host IPv4 address>:8080
+
+#and the dolfined2 container
+http"//<EC2 Docker host IPv4 address>:4000
+
+# You should be able to see the default Nginx page from both containers
+
+
+# Delete both containers and the network created by docker compose
+$ docker compose down 
+
+
+
+
+################################################################
+########### Docker Compose file - Adding  volumes ##############
+
+# We will add a bind mount to the first container configuration, and a docker volume to the second container
+
+# On the docker host, let's create a directory host-folder which will be used for the bind mount
+$ mkdir host-folder
+
+# Change the path into the host-folder
+$ cd host-folder/
+
+# Find out the full path of this directory
+$ pwd
+/home/ubuntu/host-folder
+# Take a note of the command output in your case if it is different, it has to be the full output of the "pwd" command
+
+# Lets now write the volumes in VS Code (as per the below), then copy and paste into the docker-compose.yml file then save it
+
+# go back to the home directory
+$ cd ..
+$ pwd
+# /home/ubuntu
+
+$ nano docker-compose.yml
+---
+services:
+  web:
+    image: nginx
+    container_name: cont1
+    ports:
+      - "8080:80"
+    volumes:
+      - /home/ubuntu/host-folder:/usr/share/nginx/html
+# This adds a bind mount for the first container map it to the /usr/share/nginx/html directory in the container
+
+# The /usr/share/nginx/html directory in Nginx is the default root document where Nginx stores the server static files (HTML, CSS, JS, Images...etc)
+
+  frontend:
+    image: nginx
+    container_name: cont2
+    ports:
+      - "4000:80"
+    volumes:
+      - new-vol:/usr/share/nginx/html
+# This adds the named docker volume new-vol and map it to the /usr/share/nginx/html directory in the container
+
+
+volumes:
+  new-vol: 
+# This will create the named docker volume new-vol used in the second container
+
+---
+
+# Now copy the above and paste it in the docker-compose.yml file and save it
+
+# Before we go ahead and start the containers, let's check that there are no docker volumes available on the host.
+
+$ docker volume ls
+
+# You will not find any (unless if you did not clean up from previous labs)
+# If you find any and you do not want them, it is a good idea to clean them up now.
+
+# Lets start the containers through docker compose
+$ docker compose up -d
+
+# Lets see what containers have been created
+$ docker compose ps
+
+# Now, list the available volumes again
+$ docker volume ls
+# You should see an output like the below
+DRIVER    VOLUME NAME
+local     ubuntu_new-vol
+
+# Lets inspect both containers to check the Mounts section 
+
+$ docker inspect cont1
+# You should see the "Type" as bind mount
+
+
+$ docker inspect cont2
+# You should see the "Type" as volume mount
+
+
+# Lets now create a simple index.html page in the host-folder on the docker host. because of the bind mount, this should be on the /use/share/nginx/html directory in the container, dolfined. 
+# This will not affect the other container, dolfined2, because it relies on a docker volume and it is not related to the /host-folder/ directory.
+
+$ cd host-folder
+
+# Check the contents of this folder
+$ ls
+# There shouldn't be any files in the folder
+
+~/host-folder$ nano index.html   
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DolfinED Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9fafc;
+      color: #333;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .logo {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #004080;
+      margin-bottom: 10px;
+    }
+    a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <img src="https://www.dolfined.com/assets/images/logo.png" alt="DolfinED Logo" class="logo">
+  <h1>Welcome to DolfinED Academy</h1>
+  <p>If you are watching this page, you are the latest learner of our Docker Compose Section in the Docker mastery course</p>
+  <p>Visit <a href="https://www.dolfined.com/">www.dolfined.com</a> for more information and support.</p>
+</body>
+</html>
+
+
+# From the aws console, copy the public IPv4 address of the docker host. Open a new browser and start an http session to that IP address on port 8080
+
+# Access the dolfined container
+http"//<EC2 Docker host Public IPv4 address>:8080
+# You should see the index.html file message "Hello from Docker Compose Container - dolfined"
+
+# and the dolfined2 container
+http"//<EC2 Docker host IPv4 address>:4000
+# You should be able to see the default Nginx page from both containers, since we did not make any changes to it.
+
+# Now, lets clean up. Delete the containers, the default_ubuntu network,  and the volumes
+$ docker compose down  --volumes    # you can also use -v
+# This will not delete the /host-folder since it is not controlled or create by docker compose.
+
+# move back to the home directory
+$ cd ..
+
+
+/var/lib/docker/volumes/ubuntu_new-vol/_data
+
+###########################################################################
+########## Using the Image Build Feature in Docker Compose ################
+
+
+# Now, Create the below Dockerfile and save it.
+
+$ nano Dockerfile
+---
+FROM nginx
+EXPOSE 80
+---
+
+# Next, Lets create a docker compose file with a custom name and add the below content to it and save it.
+
+$ nano alternatename.yml
+---
+services:
+
+  web:
+    build: .  # build from the current directory using a file named Dockerfile
+    container_name: dolfined
+    ports:
+      - "8080:80"
+---
+# save the file and exit
+
+# Start the docker compose container dolfined using the -f and specify the alternate file name
+
+$ docker compose -f alternatename.yml up -d
+
+# Verify that the image was built by docker compose. This image will be used to create the container dolfined.
+
+$ docker images
+# You should find an image ubuntu_web created 
+
+# Verify that the container is created
+$ docker compose ps
+
+# Lets delete the resourses created
+$ docker compose down -f alternatename.yml --remove-orphans --volume
+
+# Remove the image created by docker compose
+$ docker rmi ubuntu-web
+
+
+
+##########################################################################
+####### Dockerfile with an alternate name in a different directory #######
+
+# Lets now investigate how we can use the docker compose build feature when using a dockerfile with a different name and in another directory, other than the local directory
+
+# Lets create a new directory new-dir
+$ mkdir new-dir
+
+# Lets move and rename the current Dockerfile from the current directory into /new-dir and change its name to alternatefile
+$ mv Dockerfile new-dir/alternatefile
+
+# Lets create a new  Docker compose file to update these changes
+
+$ nano alternatename.yml
+---
+services:
+
+  web:
+    build:
+      context: ./new-dir # shows the relative path to the docker file location
+      dockerfile: alternatefile # The name of the docker file in /new-dir
+    container_name: dolfined
+    ports:
+      - "8080:80"
+---
+
+# Save the file to alternatename.yml (not docker-compose.yml) and lets try this configuration file
+
+$ docker compose -f alternatename.yml up -d
+# You will find that it works without any issues. Also, the ubuntu-web image was created. 
+
+# Lets clean up. We can use the --rmi all option to clean up any images docker compose built or downloaded (not good for production environments - use with care)
+$ docker compose down  -f alternatename.yml --rmi all
+
+# Please remember that Docker compose is for multi-container configurations on a single docker host. If you want to manage docker containers on multiple hosts, Docker Swarm is one tool to help you with that. Alternatives are kubernetes or OpenShift
+
+################################### THE END #############################

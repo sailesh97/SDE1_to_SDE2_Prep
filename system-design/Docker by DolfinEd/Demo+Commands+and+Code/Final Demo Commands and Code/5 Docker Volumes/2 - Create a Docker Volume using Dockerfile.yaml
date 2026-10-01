@@ -1,0 +1,100 @@
+
+#################################################################
+########## Creating Docker Volumes using Dockerfiles ############
+#################################################################
+Objective:
+
+1- Create a new Docker file with a volume
+2- Build an image from the docker file
+3- Run a container from the image
+4- Make a change to the volume inside the container
+5- Access the volume from the host and verify the change made
+
+##################################################################
+############ Create a Docker volume using a Dockerfile ###########
+
+
+
+# Verify that you do not have any docker volumes on the host
+$ docker volume ls
+
+$ nano Dockerfile
+
+# The source image to start with
+FROM ubuntu 
+# Create a volume that mounts at the /data directory in the container
+VOLUME /data
+
+
+# Use CMD to echo "Hello There" into /data/test.txt and then read the content of the file
+CMD ["/bin/bas]h", "-c", "echo 'Hello There' > /data/test.txt && cat /data/test.txt"]
+
+# Save the file under the name Dockerfile
+
+# Check the file exists using "ls" command, and verify its content using the "cat" command
+$ ls
+$ cat Dockerfile
+
+# Lets build a docker image from the Dockerfile
+$ docker build -t dockervolume .
+
+# Verify using docker images
+$ docker images
+
+# Now, lets build a container using that image
+$ docker run  --name cont1  dockervolume
+
+# Verify the container is created using docker ps command
+$ docker ps
+
+# Verify that a volume is now created, what is its name?
+$ docker volume ls
+# You should see a volume is created with a very long name (anonymous name), similar to
+# DRIVER    VOLUME NAME
+# local     ca106476dd1ef3fc0dc7359ccbdadfecdc65ec5ea9549603d41c2a4350804fa9
+
+
+# Lets find out from the container details whether it is mounted to this volume
+$ docker inspect cont1
+
+# scroll up to the mounts section, you should see something like this
+#  "Mounts": [
+#             {
+#                 "Type": "volume",
+#                 "Name": "ca106476dd1ef3fc0dc7359ccbdadfecdc65ec5ea9549603d41c2a4350804fa9",
+#                 "Source": "/var/lib/docker/volumes/ca106476dd1ef3fc0dc7359ccbdadfecdc65ec5ea9549603d41c2a4350804fa9/_data",
+#                 "Destination": "/data",
+#                 "Driver": "local",
+#                 "Mode": "",
+#                 "RW": true,
+#                 "Propagation": ""
+
+
+
+# Now, lets list the content of the host path for the volume
+$ ls /var/lib/docker/volumes/ca106476dd1ef3fc0dc7359ccbdadfecdc65ec5ea9549603d41c2a4350804fa9/_data
+# You should see the test.txt file we created from the container CMD instruction with the "echo" command execution
+
+
+# If you want to verify the file content, use the cat command
+# Replace the volume ID with your own in your lab
+
+$ cat /var/lib/docker/volumes/ca106476dd1ef3fc0dc7359ccbdadfecdc65ec5ea9549603d41c2a4350804fa9/_data/test.text
+
+# Lets clean up. Remove the container and the image
+$ docker rm -f cont1
+$ docker rmi -f dockervolume 
+
+# Now, lets find out if the volume persisted?
+$ docker volume ls
+# you will find that the volume is still there. Docker volumes are independent from container or image lifecycles.
+
+# There are two ways to delete the volume manually
+$ docker volume rm <volume name>
+
+#or
+$ docker volume prune 
+# This will remove unused anonymous volumes, but will prompt you first before deletion. It will not remove the manually created volumes even if unused
+
+
+

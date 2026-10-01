@@ -1,0 +1,73 @@
+############################################################################################## Bind mount and default container behavior ###################
+##############################################################################
+
+<!-- Objective:
+Demonstrate the hostpath / Bind Mount behavior when attached to a container.
+We will test this when the bind mount has no data and when it does have data to see if this makes any difference -->
+
+# Important note: nginx image uses the path /usr/share/nginx/html inside the image and container as the root document. Where it stores the static and html files.
+
+# Create two directories empty-dir and data-dir
+$ mkdir empty-dir
+$ mkdir data-dir
+
+# Change directory into the data-dir and use echo command to create a file inside the data-dir and output the message "This is the data-dir hostpath"
+$ cd data-dir
+$ echo "This is the data-dir hostpath" > test.txt
+
+# To check the nginx behavior without any bind mounts, create a container with the name nobind-cont in detached mode, map port 80 on the host to the container port 80, this will run the default nginx command
+$ docker run -d --name  nobind-cont -p 80:80 nginx
+
+# # Start an exec interactive shell into the container
+$ docker exec -it nobind-cont bash
+
+# Check the content of the /usr/share/nginx/html directory
+$ ls /usr/share/nginx/html
+# you should see the index.html file and 50x.html in the folder
+
+# Copy the public IPv4 IP address of the EC2 Docker host, and browse to port 80 on the Docker host, you should see the default nginx html page
+
+
+# Now, we will test with bind mount. First, we will test with the empty-dir as the hostpath.
+# Create an nginx container, empty-cont in detached mode and mount the hostpath /home/ubuntu/empty-dir/ to the nginx root document path /usr/share/nginx/html. map host port 8000 to the container port 80
+
+$ docker run -d --name empty-cont -p 8000:80 -v /home/ubuntu/empty-dir:/usr/share/nginx/html nginx
+
+# Start an exec interactive shell into the container
+$ docker exec -it empty-cont bash
+
+# Check the content of the /usr/share/nginx/html directory
+$ ls /usr/share/nginx/html
+# You should see no files. This is because the bind mount does not allow the container to access the files in the container path mapped to the hostpath.
+
+# Copy the public IPv4 IP address of the EC2 Docker host, and browse to port 8000 on the Docker host, you should get an nginx 403 forbidden error, as nginx cannot find the index.html page to respond to the http request.
+
+# This confirms that the empty hostpath empty-dir masked all files in the /usr/share/nginx/html path in the container leading to this error.
+
+# Now, lets test with the data-dir. Create an nginx container with the name data-cont using in detached mode and mount the hostpath /home/ubuntu/data-dir/ to the nginx root document path /usr/share/nginx/html. map host port 9000 to the container port 80
+
+$ docker run -d --name data-cont -p 9000:80 -v /home/ubuntu/data-dir:/usr/share/nginx/html nginx
+
+# Start an exec interactive shell into the container
+$ docker exec -it data-cont bash
+
+# Check the content of the /usr/share/nginx/html directory
+$ ls /usr/share/nginx/html
+# You should see the file test.txt and no html files. This is because the bind mount does not allow the container to access the files in the container path mapped to the hostpath.
+
+# Copy the public IPv4 IP address of the EC2 Docker host, and browse to port 9000 on the Docker host, you should get an nginx 403 forbidden error, as nginx cannot find the index.html page to respond to the http request.
+
+# This confirms that the hostpath data-dir masked all files in the /usr/share/nginx/html path in the container leading to this error.
+
+
+# Clean up. Delete all the images and host paths (empty-dir and data-dir) created
+
+#### Conclusion #####
+# Bind mount masks and does not allow access to any image files in the container path mapped to the bind mount irrespective of whether the bind mount is empty.
+
+
+
+
+
+
+

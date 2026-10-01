@@ -1,0 +1,288 @@
+
+############################################################################
+######################### Capstone Project 2 ###############################
+###### Deploying an Online Visitor Counter using  Flask and Redis DB #######
+############################################################################
+
+# 📊 Website Visitor Counter App - Using Flask + Redis
+
+# A simple Flask + Redis web app that tracks and displays page visit counts along with the visitor's country and flag, using geolocation. Built with Docker and Docker Compose.
+
+# 🚀 Features
+
+# 🔢 Counts visits in real time using Redis 🌍 Detects visitor country via IP (with flag emoji 🇺🇸) 📜 Displays the 50 most recent visits (timestamp + country) 🔁 One-click reset button 🐳 Dockerized with Redis persistence
+
+
+# The project files are available on GitHub, you can clone them using 
+$ git clone https://github.com/DolfinED-HoLabs/visitor-counter.git
+
+# Check the downloaded project files
+$ ls
+# you should see a directory "visitor-counter"
+
+# To inspect the files
+$ cd visitor-counter
+$ ls -la
+
+# You should see the output 
+# root@ip-172-31-45-181:/home/ubuntu/visitor-counter# ls -la
+# total 40
+# drwxr-xr-x 4 root   root   4096 May 13 12:45 .
+# drwxr-x--- 5 ubuntu ubuntu 4096 May 13 12:45 ..
+# drwxr-xr-x 8 root   root   4096 May 13 12:45 .git
+# -rw-r--r-- 1 root   root     78 May 13 12:45 .gitignore
+# -rw-r--r-- 1 root   root    198 May 13 12:45 Dockerfile
+# -rw-r--r-- 1 root   root   1959 May 13 12:45 README.md
+# -rw-r--r-- 1 root   root   1566 May 13 12:45 app.py
+# -rw-r--r-- 1 root   root    242 May 13 12:45 docker-compose.yml
+# -rw-r--r-- 1 root   root     21 May 13 12:45 requirements.txt
+# drwxr-xr-x 2 root   root   4096 May 13 12:45 templates
+# Create the project directory
+
+# Check the content of the application
+$ nano app.py
+# You will find the code below
+############## The Application's Code - Python FLASK - app.py ################
+
+import time
+import redis
+import requests
+from flask import Flask, request, render_template, redirect
+from datetime import datetime
+
+app = Flask(__name__)
+cache = redis.Redis(host='redis', port=6379)
+
+def get_hit_count():
+    retries = 5
+    while True:
+        try:
+            return cache.incr('hits')
+        except redis.exceptions.ConnectionError as exc:
+            if retries == 0:
+                raise exc
+            retries -= 1
+            time.sleep(0.5)
+
+@app.route('/')
+def homepage():
+    count = get_hit_count()
+
+    ip = request.remote_addr
+    timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+
+    # Get geolocation data
+    geo_data = requests.get(f'http://ip-api.com/json/{ip}').json()
+    country = geo_data.get('country', 'Unknown')
+    country_code = geo_data.get('countryCode', 'ZZ')
+
+    # Construct the flag emoji
+    flag = chr(0x1F1E6 + ord(country_code[0]) - ord('A')) + chr(0x1F1E6 + ord(country_code[1]) - ord('A'))
+
+    log_entry = f"{timestamp}|{ip}|{country}|{flag}"
+    cache.lpush('visit_logs', log_entry)
+    cache.ltrim('visit_logs', 0, 49)
+
+    logs = cache.lrange('visit_logs', 0, 49)
+    decoded_logs = [entry.decode('utf-8').split('|') for entry in logs]
+
+    return render_template('index.html', count=count, logs=decoded_logs)
+
+@app.route('/reset')
+def reset_counter():
+    cache.set('hits', 0)
+    cache.delete('visit_logs')
+    return redirect('/')
+
+
+########### End of Code ##########
+
+
+# Inspect the requirements.txt file
+$ nano requirements.txt
+
+Flask
+redis
+requests # this is for Geo IP - detecting the IP and country - 
+
+# Inspect the index.html file ##
+$ cd templates
+$ nano index.html
+
+
+# Inspect the Dockerfile as per the below. Docker compose will use this file to build the image for the application
+
+$ nano Dockerfile
+
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy requirements file
+COPY requirements.txt requirements.txt
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the entire app
+COPY . .
+
+ENV FLASK_RUN_HOST=0.0.0.0
+# Expose the port the app runs on 
+EXPOSE 5000
+
+# Command to run the application
+CMD ["flask", "run"]
+
+#### Notes:
+# the --no-cache-dir in pip install
+# 🔍 What It Does
+# It prevents pip from storing downloaded package files in its local cache (~/.cache/pip). 
+# Specifically:
+# Saves space in the Docker image.
+# Avoids storing .whl and .tar.gz files after installation.
+# Makes the final image smaller and cleaner, especially useful in Docker builds.
+
+
+# The ENV FLASK_RUN_HOST=0.0.0.0
+# This sets an environment variable that tells Flask's development server to:
+# 🔊 Listen on all available network interfaces, not just localhost (127.0.0.1).
+# 🧠 Why It Matters in Docker
+# By default, Flask runs on 127.0.0.1, which means:
+# It's only accessible inside the container
+# You cannot reach it from your browser on localhost:5000
+# ➡️ In other words, when you use the ENV FLASK_RUN_HOST=0.0.0.0, Flask becomes accessible from outside the container, through the published port
+
+# We can also include the same by using 
+# CMD ["flask", "run", "--host=0.0.0.0"]
+# But the ENV option is preferred.
+
+# We can combine the Host and port as follows in the CMD command
+# CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+
+# Again, the ENV option is easier to override at runtime and is cleaner in terms of code quality.
+
+
+
+
+# Create a ".env" file for Flask environment variables then save the file
+$ nano .env
+
+FLASK_APP=app.py
+FLASK_ENV=development
+REDIS_HOST=redis
+REDIS_PORT=6379
+
+# # If you do not create this file and you try to run docker compose, you will get a response like this 
+# $ docker compose -p counterapp up
+# env file /home/ubuntu/visitor-counter/.env not found: stat /home/ubuntu/visitor-counter/.env: no such file or directory
+
+
+# Create the docker compose file
+
+$ nano docker-compose.yml
+# It will build an image of the app and use a readily available image for redis #######
+
+
+services:
+  web:
+    build: .
+    ports:
+      - "9000:5000"
+    env_file:         # Tells Docker Compose what is the variables file
+      - .env
+    volumes:          # Maps the visitor-counter directory on the host to /app
+      - .:/app
+    depends_on:       # Influences creating redis container first before web
+      - redis
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis-data:/data # Maps a named volume to the /data directory in redis
+
+volumes:
+  redis-data:
+
+# 
+# If you did not create the .env file as shown above, you have to :
+
+# In the dockerfile, include
+# FLASK_APP=app.py
+# FLASK_ENV=development
+# REDIS_HOST=redis
+# REDIS_PORT=6379
+
+# In the docker compose YAML file, remove the env_file attribute and replace it with
+
+  # environment:
+  #     - FLASK_APP=app.py
+  #     - FLASK_ENV=development
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+
+
+# Start the application using docker compose
+
+$ docker compose -p counterapp up --build --no-cache -d
+
+# to force a clean rebuild of the image, we can use
+
+# Notes:
+# --build - instructs docker compose to start a new build
+# "-p counterapp" assigns a name to this compose project
+
+# Verification
+# Open a new browser page. Navigate to the public IPv4 address of the docker host on port 9000
+# You should see the text, 
+# Hello From DolfinED, You have visited this page 1 times.
+# Refresh the page multiple times, you will notice that the counter is incrementing each time you refresh the page.
+
+
+############################################################################
+##### Updating the application code "app.py" while the app is running ######
+############################################################################
+
+# Change the app.py file on the Docker host as follows:
+# Change "Hello From DolfinED, I have been seen..." to the following statement  "Hello From DolfinED's Docker Mastery Course, I have been seen... " and then save the file
+
+### Reload the browser page, you will see the change. This makes sense, since the change is made to the Docker Host app.py under the visitor-counter directory which is mapped to the /app directory in the web container.
+
+# This is crucial in development mode as we need to do changes that reflect automatically to the running containers.
+
+# Let's analyze what played a role in this automatic updates to the container.
+# Inspecting the docker-compose file we can see the .:/app under volumes. This is how we mapped visitor-count to /app in the web container.
+
+# Moreover, the FLASK_ENV=development enables auto-reload (live code changes) and the debug mode which both help in automatically refreshing the app and reflecting any changes in the app.py
+
+# We can also include 
+      # FLASK_DEBUG=1
+      # In the .env (or docker compose YAML file under environment: attribute) which will enable the debugger. Not required since FLASK_ENV=development takes care of that and the auto loader.
+---
+    volumes:
+      - .:/app  # binds the host "project" directory to the container's /app 
+    environment:
+      - FLASK_ENV=development   # informs Flask that this is development
+      - FLASK_DEBUG=1           # enables the debugger
+---
+
+
+# go to app.py and make the below change to track how it works
+
+# change "Hello From Course Docker Mastery, I have been seen... " to >> "Hello From DolfinED, Do you see these changes reflected? you have visited this web page..."
+
+## Refresh the browser page again, you will see the updates reflected
+
+## Why did the change in the application get reflected without having to rebuild the image? This is due to the bind mount between the Docker host project directory and the /app director in the container
+
+
+## We could think of a second approach without having to map bind mounts to the container. In that case, to update the app, we have to rebuild the image by running the docker compose file again after updating the bind mount.
+# This means we have to bring the application down to update it, which is not recommended.
+
+# This is all we need to do for this project
+
+## You can go ahead and delete the environment created by docker compose using : 
+
+## Run the docker compose file again 
+$ docker compose down --rmi all 
