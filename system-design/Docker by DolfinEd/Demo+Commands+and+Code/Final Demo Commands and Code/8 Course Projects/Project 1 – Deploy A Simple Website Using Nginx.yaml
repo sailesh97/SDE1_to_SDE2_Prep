@@ -1,0 +1,76 @@
+
+#######################################################################
+######################### Capstone Project 1 ##########################
+######## Deploying a frontend website for an educational insitute #####
+#######################################################################
+
+
+# Template source : 
+https://elements.envato.com/school-website-template-M6JCPEN
+
+
+
+# The command below will download the project to your desktop
+$ git clone https://github.com/DolfinED-HoLabs/Docker-Capstone-Project1.git
+
+# Relative path in your laptop (path from where you did the clone git command) for the website code would be:
+ # Docker-Capstone-Project1/school-website
+
+
+$ pwd
+$ ls
+$ cd Docker-Capstone-Project1 # and review files
+$ ls
+$ cd school-website
+$ ls
+
+# now go back one step
+$ cd ..
+# you are now back into the Docker-Capstone-Project1 directory
+
+# Create a Dockerfile using nano
+$ nano Dockerfile
+
+# Paste the below into the file
+FROM nginx:latest
+COPY ./Docker-Capstone-Project1/school-website /usr/share/nginx/html/
+EXPOSE 80
+
+# You have to use the relative path in the COPY instruction. It has to be a path within the build context. For example, if you specify the source path as the absolute path, /home/ubuntu/Docker-Capstone-Project1/school-website
+# The build will fail as Docker won't allow copying in that case 
+
+# Build the image from the Dockerfile and run it publishing port 3000 to be mapped to port 80 on the host
+
+$ docker build -t webschool .
+
+$ docker images # to validate the creation of the new image
+
+$ docker run -it --rm -d -p 8080:80 --name web webschool
+
+# Using the IPv4 public IP address of the docker host (get it from the AWS console), Open a browser and navigate to port 8080 to access the school website
+
+# Create an Alias to the image to prepare it to be pushed to a Docker hub repository with the name new-web (or choose the name you like)
+
+docker tag web labuser701/new-web:v1
+# please replace labuser701 with your docker hub account name, and new-web with the name you have chosen for your repository/image.
+
+## we need to login first ##
+$ docker login
+
+# push the image to docker hub
+$ docker push labuser701/new-web:v1 # open the docker hub and review repo
+
+
+## (Optional) clean up the webschool and labuser701/new-web:v1 images from the docker host using the "docker rmi -f" command
+# Then pull the image again from docker hub and use it to create a docker container to verify successful push to Docker hub
+$ docker pull labuser701/new-web:v1
+$ docker run -it --rm -d -p 4000:80 --name new-cont labuser701/new-web
+
+# Browse to port 4000 to the Public IPv4 address of the Docker host, you should see the same previous result, this time we mapped port 4000 on the host to the container.
+
+# To clean up, if you need to retry the lab or to ensure you keep the environment tidy, use the command
+
+$ rm -rf path/to/directory
+# rm -rf school-website
+
+# use " docker rmi -f"  and " docker rm -f "to remove the images and containers

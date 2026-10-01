@@ -1,0 +1,395 @@
+##########################################################
+#########  DOCKER NETWORKING MODES  ######################
+##########################################################
+
+
+      
+#####################################################
+############ Docker Network Bridge Mode #############
+#####################################################
+
+
+
+##############################################################################
+######### Checking for Outbound Internet access from the container ###########
+##############################################################################
+
+# Create a container cont4, ubuntu image, and start an interactive shell to test connectivity outbound to the internet.
+$ docker run -it --name cont4 ububtu bash
+
+# install the ping and curl utilities
+$ apt update && apt install -y iputils-ping curl
+
+# while logged into the container, ping 8.8.8.8 (Google's DNS server), does it work?
+$ ping 8.8.8.8 
+
+# The ping succeeds because the container has outbound access to the internet through the bridge IP gateway to the host network stack. The host does Network Address translation and hides the 
+
+# Try browsing www.cnn.com website
+$ curl https://www.cnn.com
+
+# you will get the website response garbled. This is because you do have outbound internet access.
+
+
+# Delete cont4
+
+$ docker rm -f cont4
+
+
+
+#####################################################
+############ Docker Network Bridge Mode #############
+#####################################################
+
+
+# show all ip addresses on the host (or container)
+$ ip a 
+
+# Notice the eth0, which is the virtual network interface card (vNIC) of the AWS EC2 instance (the docker host).
+# Also, notice the docker0 interface, which is the ethernet interface and its IP address of the default gateway interface of the default docker network bridge docker0
+
+
+# List the current docker networks on the host
+$ docker network ls 
+# you will see the three defualt networks are named bridge, host, and none and the corresponding DRIVER values are bridge, host, and null
+
+
+# To find more information about a network
+# use the bridge network ID found from the "docker network ls" command output
+
+$ docker network inspect <ID of the network>
+
+ # you will see [name, ID, subnet, geteway, any attached containers, the container IP addresses...etc]
+ # Notice the default ip range for the docker0 bridge network which is 172.17.0.0/16
+
+
+# create a new container, nginx image, with the name cont1 and log into the container
+
+$ docker run -it --name cont1 nginx /bin/bash
+
+# Display the network information in the cotainer using the command "ip a"
+[root@9b7581001145 /]# ip a 
+
+# you will see eth0, which is the vNIC (virtual network interface card) of the container and its IP address is 172.17.0.2/16
+# This confirms that any container created by default gets assigned to bridge network docker0 and gets allocated an ip address from the default docker0 range 172.17.0.0/16
+
+# Open a new terminal connection to the AWS EC2 instance host (to avoid exiting from the container which will stop it)
+
+# display all IP addresses on the host again using 
+
+$ ip a
+
+# you should see now a new "vethxxxxx" interface created without an IP address, this is the bridge (docker0) network interface connected to the running container. It will disappear if you stop the container.
+
+# Read through the link to see that it is connected to docker0
+
+# Exit from the container cont1 (this will stop the container)
+
+
+
+#############################################################
+############ Creating a Custom Docker Network ###############
+
+# Let's now create a new bridge network my-network
+
+$ docker network create my-network
+# verify it was successfully created using the command
+
+$ docker network ls
+# you should see a new bridge network with the NAME my-network and DRIVER bridge.
+
+
+# Lets display more details about this new network
+
+$ docker network inspect my-network (or its ID) 
+# verify the docker assigned ip subnet for this new network 172.18.0.0/16. This was not specified in the docker create network command. Also, notice the assigned default gateway IP address 172.18.0.1/16 
+
+# display all IP addresses on the host now
+
+$ ip a
+
+# you will see a new interface br-xxxxxx with the text including "....inet 172.18.0.1/16". This means the new bridge network's default IP gateway is known to the docker host.
+
+
+# Lets create a new container cont2, nginx image, and connect it to the new network, and log into the container
+
+$ docker run -it --name cont2 --network my-network nginx /bin/bash
+
+
+# type ip a to find the ip addresses in the new container
+
+$ ip a
+# you will find an eth0 interface with the IP address 172.18.0.2/16 is created.
+
+# Switch to the EC2 instance's (docker host) terminal 
+# Inspect the network my-network
+
+$ docker network inspect my-network (or its ID) 
+# You should see that cont2 is now assigned 172.18.0.2/16 ip address
+
+# On the EC2 docker host terminal display all IP addresses on the host again using 
+
+$ ip a
+
+# you should see now a new "vethxxxxx" interface created without an IP address, this is the docker bridge my-network network interface connected to the running container cont2. It will disappear if you stop the container.
+
+# Read through the link to see that it is connected to the bridge br-xxxxx which is the custom bridge network my-network
+
+
+##############################################################################
+### Verifying that a container can attach to 2 networks simultaneouly  ###### ##############################################################################
+
+# Lets now create a new container con3, nginx image, detached, and leave it on the defualt network
+$ docker run -d --name cont3 nginx 
+
+
+# Lets create a new network custom-network and assign it an IP range (or subnet) 10.0.0.0/16 
+
+$ docker network create --subnet 10.0.0.0/16 custom-network
+
+# Display the docker available networks
+$ docker network ls
+
+# You should see the new network listed with a DRIVER bridge and a name custom-network
+
+
+# Lets find out more information about this new network
+$ docker network inspect custom-network
+
+# You should see that it was assigned the IP subnet specified 10.0.0.0/16 network. And its gateway IP address 10.0.0.1/16
+
+
+# Loging to container cont3 
+$ docker exec -it cont3 /bin/bash
+
+
+# Display the container IP addresses
+$ ip a  
+# You can see that it has eth0 with the IP address 172.17.0.x
+
+# Switch to the EC2 host terminal. We need to attach this container cont3 to the new network custom-network
+
+$ docker network connect custom-network cont3
+
+# Switch now to the cont3 terminal and run "ip a" again
+$ ip -a
+
+# you will see that the container now has two eth interfaces, the former one with IP address 172.17.0.x and a new one eth1 with an IP address 10.0.0.2/16 assigned from the bridge network custom-network 
+
+# Switch to the host terminal and use the command      "ip a", you will see that a new veth interface mapped to the custom-network br-xxxxx ID is now created
+
+
+# Lets verify that cont3 is now attached to the custom-network
+$ docker network inspect custom-network
+
+# you will see that cont3 is now attached to the custom network and was assigned ip address 10.0.0.2/16
+
+
+# Lets verify that cont3 is still attached to the default network
+$ docker network inspect bridge
+
+# you will see that cont3 is still attached to the default bridge docker0 network and is assigned ip address 172.17.0.x/16
+# This confirms that a container can simultaneouly attach to two networks.
+
+# Now let's use the disconnect option to remove cont3 from the custom-network
+
+$ docker network dicsconnect custom-network cont3
+
+# verify using the "ip a" command on the host EC2 instance to see that the veth on the br-xxxxx of the custom-network does not exist anymore.
+
+$ ip a
+
+# Switch to the container terminal and use the same command, you should see that eth1 has been removed.
+
+$ ip a
+
+# use docker rm -f to kill/delete all the containers you have now
+
+$ docker rm -f cont1 cont2 cont3
+
+
+# Delete the custom bridge networks created during the lab, my-network and custom-network
+$ docker network rm my-network
+$ docker network rm custom-network
+
+
+
+
+############################################################
+################ Network Host Mode #########################
+############################################################
+
+
+# We will now work with the network with the NAME host and DRIVER host
+
+# List the available docker networks
+$ docker network ls
+
+# Lets create a new container cont1, image nginx, and attach it to the network host, log on to the container
+
+$ docker run -it --name cont1 --network host ubuntu bash
+
+# notice the prompt of the container, it is very similar to that of the EC2 host
+root@ip-172-31-17-10:/# hostname 
+# you will see the same name of the docker host
+
+# Install the iproute2 package to use the command ip a on the container
+$ apt update && apt install -y iproute2 iputils-ping
+
+# Lets check the IP addresses on the container
+root@ip-172-31-17-10:/# ip a 
+# you will see all the network adapters that are in the EC2 host
+# Therefore, unlike bridge network mode, the host mode does create a dedicated eth0 for the container. Rather, the container shares the host's network and IP stack.
+
+
+# Lets inspect the container to see the IP settings
+$ docker inspect cont1
+
+# You should see that the NetworkMode is host, and IPAddress is "" blank, the hostname is the same as that of the docker host
+
+
+# Let's test outbound connectivity from the container to 8.8.8.8
+$ ping 8.8.8.8
+
+# It should succeed indicating that containers in Host mode have access to what the Docker host they are created within has access to.
+
+
+
+# Delete the container cont-host1
+$ docker rm -f cont1
+
+
+############################################################################
+######## Host Mode - Creating Two Containers using the Same Port ###########
+############################################################################
+
+# To show the difference between bridge network mode and host mode, we will create two Nginx containers. By default Nginx listens on port 80. Lets see what happens.
+
+# Lets create a container cont1, image nginx, interactive detached mode, in a host network mode
+
+$ docker run -itd --name cont1 --network host nginx
+
+# Open a new terminal shell to the EC2 docker host (the EC2 instance).
+
+# Lets now try to create cont2 with the same specs as cont2
+$ docker run -itd --name cont2 --network host nginx
+
+# Did it work?
+# Did you get an error like :
+# nginx: [emerg] bind() to [::]:80 failed (98: Address already in use)
+
+# Why did this happen?
+# is this related to the fact that you have a container cont2 sharing the docker host's port 80 already? 
+
+# You cannot have two containers in docker host mode bind to the same host port. 
+# The solution in Docker host mode is to have the second container listen on a different port other than port 80, for example, port 8080
+
+# Lets now try to create the second nginx container that listens on port 8080
+docker run -it --name cont3 --network host nginx bash
+
+# The reason we added the keyword "bash" is to ensure that the Nginx server will not start such that it will not attempt to bind the port 80, which will conflict with the existing container cont2
+
+# Check to see if the image has the nano editor
+$ which nano
+
+# If the container has this installed, you should see the path to the nano tool in the output. If the output did not show anything, this means nano is not installed.
+# If you did not find the nano editor in the nginx container, you can install it using the commands
+$ apt-get update
+$ apt-get install -y nano
+
+# To make the container listen on port 8080, we need to edit the default.conf (Nginx configuration file). Then we can use the command nginx to start the server
+
+# Inside the cont3 bash shell type
+$ nano /etc/nginx/conf.d/default.conf
+
+# change the port under server from 80 to 8080 and save the file
+# Before -
+# server {
+#     listen       80;
+
+
+# After changing 80 to 8080 and saving the file - it should look like this 
+# server {
+#     listen       8080;
+
+
+
+# Now, start the nginx server in the container using the command 
+$ nginx
+
+# This should succeed without the previous error since there is no conflict on Docker host port 80 anymore.
+
+# To test to the first container - Open a new web browser tab and type
+
+http://<EC2 Docker Server public IP4 address>:80 
+# this should succeed and you should see the Nginx default page from cont-host2
+
+# Open a new web browser tab and type
+
+http://<EC2 Docker Server public IPv4 address>:8080
+# this should succeed and you should see the Nginx default page from the second container cont4
+
+# Show the docker iptables to verify that there are no PAT/NAT as in bridge mode
+
+$ iptables -t nat -L -n
+
+
+# Delete both containers
+$ docker rm cont2 cont3 cont4
+
+
+
+
+
+
+
+
+####################################################
+################ Network None Mode #################
+####################################################
+
+# Objective: We need to start a container in network none mode and prove that:
+# 1) It does not have an eth0 interface assigned
+# 2) Since there is no eth0 interface, there will be no IP address
+# 3) It does not share the host network stack
+# To prove the above, we need to use ping  and "ip a" commands
+
+# Since the container starts completely isolated, we will need to create an image first that has the ping and ip a   utilities, then create the container in none mode from the new image.
+
+# Lets create an nginx containe with a name cont-nginx and install the required utilities 
+
+$ docker run -it --name cont-nginx nginx bash
+
+# install the required utilities
+$ apt update && apt install -y iputils-ping       # ping
+$ apt update && apt install -y iproute2           # ip a
+
+# Test to ensure that you can ping 8.8.8.8 and use ip a command
+
+# Now, lets create an image from the cont-nginx container
+$ docker commit cont-nginx new-image
+
+
+# List the available docker networks
+
+$ docker network ls
+
+# we will use the network with the NAME none and DRIVER null
+
+# Lets create a container cont-none1 and map it to network none
+
+$ docker run -it --name cont-none1 --network none nginx bash 
+
+# Run the command "ip a"
+[root@9b7581001145 /]# ip a  
+# You will see that the container has only a loopback interface and does not have an eth interface on its own. Also, it does not have the docker host's eth0 interface access. Therefore, it won't be able to access any external network. 
+
+# to verify this, we will try to ping google DNS 8.8.8.8. 
+# while logged into the container, ping 8.8.8.8 (Google's DNS server), does it work?
+$ ping 8.8.8.8 
+# You will find out that this container cannot reach it.
+
+######################## Lab End #####################
+
+
+

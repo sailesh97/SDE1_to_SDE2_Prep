@@ -1,0 +1,598 @@
+########################################
+########## Basic   Docker  Commands ####
+########################################
+
+############################
+##### docker pull ##########
+############################
+
+$ docker pull ubuntu 
+# The pull command just downloads the image,  use this command if you want to download an image without running the image
+
+
+
+############################
+##### docker images ########
+############################
+
+# We can list the available images on the local host using docker images
+$ docker images 
+
+# lets go ahead and create the first container without starting it
+
+
+
+###########################
+##### docker ps ###########
+###########################
+
+$ docker ps
+# This commands lists all the running containers. 
+# in our case, you should not see any containers since none is running as of now
+
+
+# docker ps >>>> list all container running 
+# after the container finish the process the container dead so it move to ps -a
+# docker ps -a >>> list all container that stoped
+
+$ docker ps -a     ## or --all
+# This should show the command we just created
+
+
+
+
+############################
+##### docker create ########
+############################
+
+#let's create an nginx container with the name cont1
+
+$ docker create --name cont1 nginx
+# To verify that the container is created, we can use docker ps -a command
+
+
+
+
+
+
+
+############################
+##### docker start #########
+############################
+
+# Now lets go ahead and start the container we just created
+
+$ docker start cont1  # starts the container 
+
+
+
+### Open another terminal to the AWS Ubuntu EC2 instance 
+
+
+# Verify the container is running
+$ docker ps
+
+# We should see the container now
+
+
+####################################################################
+########## Verify that a container is a Software Process ###########
+####################################################################
+
+$ ps aux
+
+$ ps a | grep cont1
+
+
+
+
+
+
+#############################
+##### docker stop ###########
+#############################
+
+# Lets now stop the previously created container
+
+$ docker stop cont1
+
+# Verify by running docker ps -a 
+
+$ docker ps
+# You should not see any containers
+
+$ docker ps -a
+# This will show the container stopped
+
+# Lets now see if the container process still exists
+$ ps aux | grep cont1
+## It should be deleted
+
+#####################################################################
+###### Interacting with a container using the -i and -t options #####
+#####################################################################
+
+
+#############################
+##### docker exec ###########
+#############################
+
+# Create and start a python container with the name cont2
+$ docker create --name cont2 nginx
+
+$ docker start cont2
+
+
+# Excute a command
+$ docker exec cont2 cat /etc/hosts
+
+$ docker exec -t cont2 cat /etc/hosts
+# do you see a difference in the output between this command and the previous one when you added the -t option? why?
+# Because a seudo tty is now open, so the output is more organized
+
+
+# Interact with the container (send input to the container)
+$ docker exec cont2 login
+# This should start the login process within the container, it should promt you for login username and password. However, how can we send the input in?
+# and how can we see the output?
+
+# Lets try
+$ docker exec -t cont2 login
+# Now you get the output which is the login: prompt for the username, but stdin is not available to type and get responses, try type ubuntu, you should get a password prompt; however, you will not get it, why?
+
+
+# To fix the input issue, we can use the -i option
+
+$ $ docker exec -i cont2 login
+# You can send information into the container; however, now you have lost the -t which means stdout will not be directed to you.
+
+# So how can we do both?
+# Open an Interactive shell within the container (from the container prompt)
+$ docker exec -it cont2 login
+
+# notice the change of the prompt, you are now logged into the container
+# The container is an nginx one, so you can run some linux commands like ps
+
+$ ps
+# Please note that this is treating the container as a linux machine that you are logged into and using linux commands
+
+$ exit 
+# To exit and stop the container
+
+$ docker ps
+# validate the container state.
+
+
+
+
+
+
+################################
+######## docker run  ###########
+################################
+
+# Lets now create an ubuntu container with the name 2ndcontainer in detached mode using docker run. 
+
+$ docker run -d --name container-run1 ubuntu
+# verify using docker ps. You should see the container in the list.
+
+# Lets now create a python container (from the image python) with the name pythoncontainer in interactive bash shell using the -it options.
+
+$ docker run -it --name container-run2 python /bin/bash
+
+# Please notice the promot change.
+# now since we are logged into the container, lets execute some commands
+
+$ apt update
+$ apt upgrade
+$ ps # list running processes *** PID *** 
+$ python3 # it will open the python interactive mode
+1+1 # A summation execise to add 1 and 1, it will print the result 2
+print("Hello Docker!") # this will print Hello Docker! on the screen
+
+exit() # exit from the python interactie mode
+
+exit # exit from the container, this will cause the container to exit
+
+
+## Using the --rm option
+
+docker run -it --rm --name container-run2 python /bin/bash
+
+
+
+
+###############################
+##### docker inspect ##########
+###############################
+
+docker run -d --name container-inspect nginx
+
+# Inspect the details of the created container 
+# You can run docker inspect on running and stopped containers
+
+$ docker inspect container-inspect
+# Browse through the output to view what information is returned
+
+
+#You can also inspect docker images using docker inspect  
+docker inspect ubuntu 
+
+# To browse or search for a snippet of the output, you can use linux grep command
+
+docker inspect ubuntu | grep Size
+
+
+
+
+
+
+##########################
+##### docker commit ######
+##########################
+
+# Create a container with the name container-commit from the image Ububtu with interactive bash terminal and log on to it
+$ docker run -it -d --name container-commit ubuntu 
+# we can also do -itd instead of separate -it and -d
+
+# Now, log into the container
+$ docker exec -it container-commit bash
+
+## Please note, we could have combined the last two commands using the following command
+$ docker run -it --name container-commit ubuntu /bin/bash
+
+
+# Now, please verify that the prompt is now the container prompt and not the AWS EC2 Ubuntu virtual machine
+
+
+# 1) Try to run "ping 8.8.8.8", 
+# 2) try to nano a file "nano file1.txt"
+# 3) try to find the IP address info using "ip a"
+# 4) try to curl https://www.cnn.com
+
+# use the linux "which" command to see if the tools (Commands) are available and at which path (full path on the linux system) if available. No response means it does not exit
+$ which touch
+$ which ls
+$ which mkdir
+$ which ping
+$ which curl
+$ which nano
+$ which ip 
+
+# If the above utilities are not available in the Ubuntu image, then it is very useful to install them in your container. Then create an image from this container and use it for your future testing or similar activities.
+
+# use the below command to install ping, curl, nano, and ip address features
+
+$ apt-get update 
+$ apt-get install -y iputils-ping curl 
+$ apt-get install -y iproute2
+$ apt-get install -y nano 
+
+
+# repeat the above test steps again
+
+# 1) Try to run "ping 8.8.8.8", 
+# 2) try to nano a file "nano file1.txt"
+# 3) try to find the IP address info using "ip a"
+# 4) try to curl https://www.cnn.com
+
+# Are the utilities successfully installed? or are you still getting errors?
+# They should be installed and working now
+
+
+
+# Create a new docker image with the name new-image from the created container
+
+$ docker commit container-commit new-image
+
+# Verify that the new container exists. Check its size.
+$ docker images 
+
+# Lets create a new container with the name testing-cont from the new-image. we will also log in to the container in the same step
+
+$ docker run -it  --name testing-cont new-image /bin/bash
+
+# Now, in the new container, run the previous steps again and see if the tools are readily available
+# repeat the above test steps again
+# 1) Try to run "ping 8.8.8.8", 
+# 2) try to open a file using "vim file.txt", 
+# 3) try to nano a file "nano file1.txt", 
+# 4) try to find the IP address info using "ip a"
+# 5) try to curl https://www.cnn.com
+
+# Are the utilities available right off the bat in the new container?
+# They should be already installed and working 
+
+
+
+## During the docker commit, you can also add the container metada and add a commit message as an example
+
+$ docker commit -a "John Doe <john.doe@example.com>" -m "Updated web server configuration" container-commit new-image-1
+
+
+# verify using docker images
+$ docker images
+
+# Use docker inspect to find out if the meta data is added to the new image
+
+$ docker inspect new-image-1
+
+
+
+
+
+
+###############################
+########### docker rm #########
+###############################
+
+# rm = Remove/delete container(s)
+# List the available containers, running and stopped
+$ docker ps -a
+
+# Select a container to remove (you can use container name or ID)
+$ docker rm <container_ID or container_name>
+
+# Check if the container has been deleted
+$ docker ps -a
+
+# You can also do the same by entering the first 3 letters from the container ID
+$ docker rm <first 3 characters of the image ID>  
+
+# You can use the command to remove/delete multiple containers at once 
+$ docker rm ID1 ID2 ID3 ...
+
+# verify the deletion using ps -a
+
+# choose a running container and try the docker rm, you should get an error. (create a new container if non is running then try the docker rm)
+
+# To delete the container using docker rm, you can stop it then delete it. or you can use the -f flag as shown below.
+
+$ docker rm -f <container_ID> 
+# The command with -f should stop the running container and delete it. Verify using the docker ps -a command
+
+
+
+
+
+
+###############################
+########## docker rmi #########
+###############################
+
+# rmi = Remove/Delete docker image(s)
+
+# Lets list the existing docker images on the local host
+$ docker images # list images 
+
+# Ensure that the python container is stopped if it was still running.
+
+$ docker rmi python  # Select an image to delete - Python for example
+# This should delete the python image, verify by running docker images 
+
+$ docker images
+
+# Lets create an nginx container - this will download nginx image even if it did not exist on the local host
+
+$ docker run --name container-rmi1 nginx
+
+# Now we have a running container, lets try and delete the image nginx which container-rmi1 is created from
+
+$ docker rmi nginx 
+# This command will fail with an error. This is because there is a running conatiner created from this image.
+# We need to stop the depedent conatiner(s) first and then try to delete the image
+
+# If we need to force delete the imag while the containers are runninge, we can use the -force or -f option
+# This will stop the dependent containers and they will become disconnected from the image and cannot be restarted. The file systems and data inside the containers will be as is; however, we will not be able to restart them again.
+
+$ docker rmi -f nginx
+# This should work now
+
+# Run the command docker ps -a to verify the status of the depedent containers. Were they stopped? can you re-start them with docker start?
+
+
+
+
+
+
+
+###############################
+######### docker logs  ########
+###############################
+
+# Lets run a container that will have a shell of type sh, and excute a loop that prints the date and time every 2 seconds
+
+$ docker run -itd --name cont-logs alpine sh -c 'while true; do date; sleep 2; done'
+
+# This script is equivalent to
+# while true; do
+#     date        # prints the current date and time
+#     sleep 2     # waits for 2 seconds
+# done
+
+# Lets now print the logs
+
+$ docker logs -f cont-logs # This will print the logs live ""-f"" is for follow
+
+$ docker logs cont-logs # This will print the available logs then exits
+
+
+
+
+
+
+##########################
+##### docker --help ######
+##########################
+
+# Help Command:
+$ docker --help
+
+# To get help for a specific command, docker run, for example, we can use 
+
+$ docker run --help
+
+
+
+
+
+#################################################
+###### General Docker containers behavior #######
+#################################################
+
+# Let's execute this command
+$ docker run --name container-other ubuntu ls 
+# This will create theubuntu container, execute the ls command, then stop
+
+
+# You should see the output of ls.
+# Verify that the container has stopped by using the docker ps -a command.
+
+$ docker ps -a 
+
+
+
+#### Another example: 
+# Let's start an nginx container and see if it will stop
+$ docker run -d --name nginx-cont nginx
+$ docker ps
+# Why did this one stay Up?
+
+# Lets inspect the nginx image and see the command it runs at start
+$ docker inspect nginx | grep -A1 Cmd
+# This will search for Cmd in the output and will print the following line only to each Cmd occurance.
+
+# The output will be
+"Cmd": [
+                "nginx",
+     
+
+# if you run the docker inspect nginx without grep, the output will include
+
+
+# "Cmd": [
+#                 "nginx",
+#                 "-g",
+#                 "daemon off;"
+#             ],
+
+# Let's also inspect the Ubuntu and compare the start command
+$ docker inspect ubuntu | grep -A1 Cmd
+
+"Cmd": [
+                "/bin/bash"
+
+
+# Can we keep an ubuntu container running? it all depends on what command it will execute at the container start.
+# for example, Let's create an ubuntu container with the name container-life and execute the linux command "sleep" with a value of 30 seconds (pause for 30 secs).
+
+$ docker run -d --name container-behavior ubuntu sleep 8
+
+# Lets use docker ps command to verify that the container will run for 30 seconds and then stops 
+
+$ docker ps 
+# The container should show here, and will run for 30 second then it stops. 
+
+# After it disapears from the docker ps output, let's use the docker ps -a to verify that it has automatically stopped.
+
+$ docker ps -a
+# You should see it in the exited state
+
+
+# We can also make the container continue to run using
+$ docker run -itd ubuntu /bin/bash
+# This will open the interactive terminal that will keep the container up
+
+
+
+
+
+
+##################################################################
+####### Inbound Access from the Internet to the container ########
+##################################################################
+
+##################################################
+###### Container Port Mapping (Port Binding)######
+##################################################
+
+
+# Create an Nginx container, name is cont1, interactive mode
+$ docker run -it --name cont1 nginx /bin/bash
+
+# Nginx by default listens on port HTTP (80)
+
+
+# Now, we need to test access to the nginx container from the internet (from your laptop)
+# Log on to the AWS console, in the EC2 dashboard, select the Docker Server instance by ticking the box to the left of the docker server name. 
+# The details page will open. search for an copy the public IP IPv4 address of the EC2 instance.
+
+# Port HTTP (80) is the default http port which Nginx listens on.
+# To verify this, 
+
+# From within the container cont1 shell run the command
+$ cat /etc/nginx/conf.d/default.conf | grep listen
+
+# Look for the line 
+# Listen 80,
+# or cat the file and look for
+
+# server {
+#     listen       80;
+#     server_name  localhost;
+
+# Open a new web browser tab and type
+
+
+# Let's now start nginx using the command nginx from within the container
+$ nginx
+
+# Let's test from your laptop browser to the container on port 80 using the Docker host's (EC2 instance), public IPv4 address
+
+http://<Docker Server public IP>:80 
+# This should initiate an HTTP request on port 80 to the docker server host
+# press enter. Did the page show the default Nginx server? Why not?
+# This is because by default, there is no port binding between the running nginx container port and the host ports.
+
+# Try to access the container from within the local host using the Docker host's private IPv4 address (you can get it from the EC2 dashboard) on port 80
+
+$ curl http://<Docker Host Private IPv4 address>:80
+# This will also fail and you will get an error
+
+# Since we cannot do the port binding after creating the container.
+# We need to create a new Nginx container, cont5, Nginx Image, and create it in interactive and detached mode with port 80 mapped to docker host port 3000 using the -p 3000:80 option
+
+$ docker run -d -p 3000:80 --name cont2 nginx
+
+# Now, open a new web browser tab and navigate again to the public IP of the docker server on port 3000
+
+http://<Docker Server public IP>:3000 
+# You should see the default Nginx welcome page now.
+
+# Try to access the container from within the local host using the Docker host's private IPv4 address (you can get it from the EC2 dashboard) on port 80
+
+$ curl http://<Docker Host Private IPv4 address>:80
+# This will also succeed now given that port binding is already configured
+
+# You can check the port mapping using the command
+
+$ docker port cont2
+# You should something similar to :
+# 80/tcp -> 0.0.0.0:3000
+# 80/tcp -> [::]:3000
+
+
+# Also run docker ps and look under the PORTS
+$ docker ps
+
+
+# CONTAINER ID  IMAGE    COMMAND                     PORTS                        
+# f0a07a80f443  nginx   "/docker-entrypoin"  0.0.0.0:3000->80/tcp, [::]:3000->80/tcp
+
+
+
+# Remove the containers
+$ docker rm -f cont1 cont2
+
+
+############################### END ###################################

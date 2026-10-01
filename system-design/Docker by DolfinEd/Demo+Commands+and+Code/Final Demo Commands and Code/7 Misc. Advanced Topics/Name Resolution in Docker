@@ -1,0 +1,83 @@
+############################################################################################### Name Resolution in Docker  #################################
+##############################################################################
+
+# We need to test how would Docker react to container communication using the container names on the default network and on a user defined (custom) network
+
+################ Default Network ####################
+
+# Create two containers, cont1 and cont2 from nginx image in detached mode
+
+$ docker run -d --name cont1 nginx 
+$ docker run -d --name cont2 nginx
+
+# Open a shell into cont1 
+$ docker exec -it cont1 bash
+
+# Update and install iputils-ping in the container
+$ apt update
+$ apt install -y iputils-ping
+
+# Now, ping cont2 by name
+$ ping cont2
+
+# you will get an error
+
+# check the content of the resolv.conf file, you will see the sentence nameserver 172.31.0.2 which is an IP address on the AWS network
+
+$ cat /etc/resolv.conf
+
+# Install the iproute2 utility to use the command "ip a" to find the IP address assigned to cont1
+
+$ apt install -y iproute2
+
+# Now, find out the IP address of cont1
+$ ip a
+# you will find it has the IP address 172.17.0.2
+# Ping cont2 by IP address, cont2 IP is 172.17.0.3
+$ ping 172.17.0.3
+
+# This should work without issues.
+
+# exit from cont1
+
+########################################################################
+######## Checking DNS Resolution in User Defined Networks ##############
+########################################################################
+
+# We need to test how would Docker react to container communication using the container names on a user defined network (custom network)
+
+# create a custom network user-defined
+$ docker network create user-defined
+
+
+# Create two containers, cont3 and cont4 from nginx image in detached mode. Attach the containers to the user-defined network
+
+$ docker run -d --name cont3 --network user-defined nginx 
+$ docker run -d --name cont4 --network user-defined nginx
+
+# Open a shell into cont3
+$ docker exec -it cont3 bash
+
+# Update and install iputils-ping in the container
+$ apt update
+$ apt install -y iputils-ping
+
+# Now, ping cont4 by name
+$ ping cont4
+
+# You will get the response from cont4 which indicates a successful DNS resolution
+
+# check the content of the resolv.conf file, you will see the sentence nameserver 127.0.0.11 which is a DNS IP address for this network managed by Docker.
+
+$ cat /etc/resolv.conf
+
+#### This proves that containers on a user-defined (custom) network can communicate using names
+
+# exit from cont3
+
+# Clean up the environment. Delete cont1/2/3/4 and the network user-defined
+
+$ docker rm -f cont1 cont2 cont3 cont4
+$ docker network rm user-defined
+
+

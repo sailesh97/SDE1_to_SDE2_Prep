@@ -1,0 +1,468 @@
+
+##################################################
+################ Demo Dockerfile #################
+##################################################
+
+# We will start with a very simple docker file
+
+# lets Create a Dockerfille using the vim editor, letter D is upper case
+$ vim Dockerfile
+# Use upper case D in the dockerfile name (lower case may still work)
+## Dockerfile ##
+
+FROM alpine
+CMD [ "echo", "DolfinED", "Docker Course"]
+# save the file as 
+
+# Using the docker build command, 
+# docker build -t image1234
+# -t is to tag the image with the specified name
+
+# lets build our first docker image
+$ docker build -t image1 .
+
+
+# To display the image layers, we can use the command "docker history imageID". 
+
+$ docker history image1  
+# you can also use the imageID
+# As you can see there are several layers. Each RUN instruction is presented by a layer in the image
+
+# The output will look something like this 
+# IMAGE          CREATED        CREATED BY                                      SIZE      COMMENT
+# 46019121ba34   2 months ago   CMD ["echo" "Docker Is Awesome"]                0B        buildkit.dockerfile.v0
+# <missing>      2 months ago   CMD ["/bin/sh"]                                 0B        buildkit.dockerfile.v0
+# <missing>      2 months ago   ADD alpine-minirootfs-3.21.3-x86_64.tar.gz /…   7.83MB    buildkit.dockerfile.v0
+
+# There are three layers, although we had only two instructions? This is because alpine image itself has two instructions. The two were added in the resulting layers using the FROM instruction in your docker file
+
+# to confirm this, you can run the command
+$ docker history alpine
+
+# The output will look something like this 
+
+# IMAGE          CREATED        CREATED BY                                      SIZE      COMMENT
+# aded1e1a5b37   2 months ago   CMD ["/bin/sh"]                                 0B        buildkit.dockerfile.v0
+# <missing>      2 months ago   ADD alpine-minirootfs-3.21.3-x86_64.tar.gz /…   7.83MB    buildkit.dockerfile.v0
+
+
+# Lets run a container from that image
+$ docker run --name first-cont image1
+# You will see the sentence Docker Is Awesome printed then the container exits
+
+##############################################################################
+##### Optimizing the RUN instructions and its effect on Image layers #########
+
+## DockerFile ##
+
+FROM ubuntu
+RUN  apt-get update
+RUN apt-get install -y vim
+RUN apt-get install -y git
+CMD ["echo", "Hello", "This is from the Ubuntu base image"]
+# Please note the repeated RUN instructions inside the dockerfile
+
+$ docker build -t image2 .
+
+# To display the image layers, we can use the command "docker history imageID". 
+
+$ docker history image2   
+# you can also use the imageID
+# As you can see there are several layers. Each RUN instruction is presented by a layer in the image. This is in addition to the base image, ubuntu, layers.
+
+# Now, lets run a container off of the new image
+$ docker run --name second-cont image2
+# 
+
+
+#### The same dockerfile we used before but we will re-write it in the recommended way ####
+### DockerFile ##
+
+FROM ubuntu
+RUN apt-get update && apt-get install -y \
+    vim \
+    git
+CMD ["echo", "Hello from - Optimized image"]
+
+# We have combined the previous three RUN instructions in one
+# it could also be written as
+# RUN apt-get update && apt-get install -y vim git
+
+# Lets build the image
+$ docker build -t best-iamge .
+
+# Lets check the layers
+$ docker history best-image 
+# You will find that there are less layers due to the combined RUN instruction
+
+
+# Lets now run a container from the last image, best-image
+$ docker run --name third-cont best-iamge
+
+
+## We can use other file names for the dockerfile. Assuming our docker instructions are build in a file with the name alternatename.txt, we can reference that in the docker build command as follows : 
+
+  # Create a directory files
+$ mkdir files
+
+  # Get into the directory using cd
+$ cd files
+
+# create a test.txt file
+$ nano test.txt
+
+# paste the following dockerfile content
+FROM fedora 
+CMD ["echo", "hello this is from a dockerfile with the name test.txt"]
+# save the file
+
+# Get back to the home/ubunto home directory
+$ cd ..
+
+
+# build the image from this file
+$ docker build -f files/test.txt -t image4 .
+
+# Verify that the image is created
+$ docker images
+
+
+# Build a container from that image, you should see the sentence in the CMD instruction in the dockerfile above, test.txt
+
+$ docker run image4
+
+# Clean up, use docker rmi and docker rm to delete the lab images and containers
+
+
+###############################################################################
+############################# ENTRYPOINT ######################################
+###############################################################################
+
+# Create the below Dockerfile
+
+FROM ubuntu
+RUN apt-get update && apt-get install -y iputils-ping 
+ENTRYPOINT ["echo"]
+
+# Now, lets create the image and create a container 
+$ docker build -t imageent .
+
+$ docker run imageent Welcome to Docker ENTRYPOINT
+
+# The output will be "Welcome to Docker ENTRYPOINT"
+
+
+
+###############################################################################
+############################# ENTRYPOINT vs. CMD ##############################
+###############################################################################
+
+# the Dockerfile 
+FROM ubuntu
+CMD ["sleep","8"]
+
+$ docker build -t imageent1 .
+$ docker run imageent1 
+# the container will sleep for 8 seconds then exits
+
+
+# What if we need to override the CMD command Sleep at run time? Lets say we decide to use the command ls (to list) at the container startup time instead of sleep
+
+$ docker run imageent1 ls 
+# In this case, as you can see the "ls" command got executed and not the sleep command.
+# hence, it is easy to override the CMD in the Dockerfile at runtime
+
+
+
+# We can achieve the same we did with CMD Sleep example above using ENTRYPOINT
+
+# the Dockerfile 
+FROM ubuntu
+ENTRYPOINT["sleep", "10"]
+
+# Lets create the image and create a container and see what happens
+$ docker build -t imageent2 .
+
+$ docker run imageent2
+# the container will sleep for 10 seconds then exits
+
+
+
+# What if we need to decide the number of seconds it should sleep as we create the container, and we do not want it to be a static value into the Dockerfile? this is where ENTRYPOINT can help
+
+# the Dockerfile 
+FROM ubuntu
+ENTRYPOINT["sleep"]   # without the number of seconds parameter value for sleep
+
+# Lets create the image and create a container and pass the 15 seconds value while we create the container 
+$ docker build -t imageent3 .
+
+$ docker run imageent3 15
+
+# The container will pass the 15 as an argument value to the sleep function and it will execute as "sleep 15" then it exits
+
+
+# But then, what if we forget to add the number of seconds at the end of the docker run command?
+
+$ docker run imageent3 
+# You will get an error since Entrypoint has no parameter value for the sleep command
+
+--------------------
+
+# This is where combining both ENTRYPOINT for the command to be executed when the container starts and CMD to pass the default value argument to the ENTRYPOINT command.
+
+
+# the Dockerfile 
+FROM ubuntu
+ENTRYPOINT["sleep"]
+CMD ["5"]      # default seconds for the sleep command if no value is entered while creating the container
+
+# Lets create the image, create a container, and pass the 15 seconds value while we create the container 
+$ docker build -t imageent4 .
+$ docker run imageent4 15
+# The container will pass the 15 as an argument value to the sleep function, it will execute as "sleep 15" then the container exits
+
+# What if we forget to add the number of seconds at the end of the docker run command?
+
+$ docker run imageent4
+# This will use the CMD default value of 5 seconds and the sleep command will execute as "sleep 5" then the container exits.
+
+
+# The question now is, can we overried the ENTRYPOINT command at container runtime?
+# Yes, we can do this using the "docker run" command option --entrypoint
+
+$ docker run --entrypoint ls imageent4
+# You would see that what is executed in this case is the ls command and not the sleep
+
+
+--------------------
+# What if the ENTRYPOINT and CMD have different commands
+
+# the Dockerfile 
+FROM ubuntu
+ENTRYPOINT["sleep"]
+CMD ["echo", "I am challenging ENTRYPOINT"]     
+
+# Lets create the image, create a container, and pass the 15 seconds value while we create the container 
+$ docker build -t imageent5 .
+$ docker run imageent5
+# You should get an error as we did not pass an argument to ENTRYPOINT at runtime and there is no default value from the CMD command
+
+# What if we pass the argument value to ENTRYPOINT at runtime
+$ docker run imageent5 8
+# This should work and bypass the CMD completely. The container will sleep for 8 seconds and then exits because of the ENTRYPOINT command
+
+# Clean up the images and containers using the docker rm and docker rmi commands
+
+
+
+###############################################################################
+################################## EXPOSE #####################################
+###############################################################################
+
+
+# Create the below Dockerfile that will expose port 80 of an Nginx base image
+FROM nginx
+EXPOSE 80 
+
+
+# Lets build the image
+$ docker build -t imageport .
+
+
+# Lets run a container without port mapping to test the effect of the EXPOSE instruction in the dockerfile
+
+
+$ docker run  --name cont1  imageport
+
+# Try to connect to the container on port 80 from the host using 
+$ curl http://<host private IPv4 address>:80
+# This will not work, which dictates that in manual docker build images the EXPOSE is informational only.
+
+
+# Now, to prove this further, lets run a container and create port mapping 3000 on the host to 80 on the containers
+
+$ docker run -it -d -p 3000:80  port 
+
+# Open a new browser tab, and try to access the public IPv4 address of the EC2 docker host using port 3000 
+
+http://<EC2 docker host public IPv4>:3000 
+
+# This should work now. It proves that EXPOSE was informational only in the Dockerfile
+
+
+###############################################################################
+################################## COPY   #####################################
+###############################################################################
+
+
+# Create a file text.txt and write >>>>> Hello From Docker! <<<<<<<<, then save the file
+
+$ vim test.txt 
+
+## Dockerfile
+
+FROM ubuntu
+COPY test.txt /copytestapp
+
+# Create the image, then create a container from the resulting image
+$ docker build -t imagecopy .
+$ docker run -it imagecopy bash
+
+# Inside the container shell, look for and open the test.txt file
+
+$ ls 
+$ cat copytestapp/test.text
+# You should see the sentence we wrote in the test.txt file 
+# >>>>> Hello From Docker! <<<<<<<<
+
+## Would also make sense to have an app and we copy it then run it from within the container 
+
+
+
+###############################################################################
+#############################    WORKDIR         ##############################
+###############################################################################
+
+# Lets demonstrate the use of WORKDIR instruction in Dockerfiles
+
+# Dockerfile
+FROM ubuntu
+# Create a directly "docker" if it does not exist
+WORKDIR /app
+# this is effectively like cd /app
+RUN echo "Welcome to the Docker Course /app" > app.txt
+# create a subdirectory /code inside the /docker directory
+WORKDIR /app/code
+# this is effectively like cd /code
+RUN echo "Welcome to the Docker Course /app/code" > container.txt
+# Please note that the WORKDIR is like a cd command, anything after that WORKDIR statement applies to that directory. 
+
+# Build the image 
+$ docker build -t imageworkdir .
+
+# Create a container from the image and start it with the command pwd in interactive mode
+$ docker run -it imageworkdir pwd 
+
+OUTPUT: /app/code
+# This is because we had two "cd" commands, cd /app and cd /code which changes the default working directory inside the container as it starts.
+
+# Lets confirm this. Use the "ls" command in the /app/code/, you will find the container.txt file.
+# Type cd .. to move one step up in the filesystem. 
+$ cd ..
+# You will now be in the /app directory
+
+$ pwd
+# /app
+
+# Use "ls" again to confirm that the docker.txt file exists in this directory
+$ ls
+# You should find the docker.txt file included
+
+
+
+###############################################################################
+#############################        ENV  & LABEL    ##########################
+###############################################################################
+
+# Dockerfile
+
+FROM ubuntu
+RUN apt-get update && apt-get install -y iputils-ping
+ENV action=ping target=8.8.8.8
+LABEL maintainer="DolfinED Team <team@dolfined.com>"
+CMD ["sh", "-c", "$action $target"]
+
+# JSON + Expansion forat
+# CMD echo "$name"     # this has the same effect - shell format , but it is not recommended
+
+# the CMD parameters are the command "ping" from action, and the argument 8.8.8.8 from target
+
+# Lets build the image
+$ docekr build -t imageenv .
+
+
+# Lets build a container from the image 
+$ docker run  --name envcont imageenv 
+# The container should start in an interactive shell and the command executed is            "ping 8.8.8.8"
+
+
+# Do a docker inspect for the image and find out the LABEL value. This is not the author field inside the output
+
+$ docker inspect imageenv
+
+
+
+
+###############################################################################
+#############################        ADD         ##############################
+###############################################################################
+
+# Let's create a file structure and a tar.gz file to explaine the ADD command
+# Let's create a directory data and create two files in that directory file1.txt and file2.txt. Add any text to the files and save them.
+
+$ mkdir data
+$ cd data
+$ nano file1.txt
+$ nano file2.txt
+
+# Move to the parent directory
+$ cd ..
+
+# create a file test.txt using nano and type any sentence in the file then save it
+$ nano test.txt
+
+# Now, lets create the .tar.gz from the data directory
+$ tar -czvf archive.tar.gz data/
+
+# -c create a new archive
+# -z compress the archive using gzip
+# -v verbose (list the files being archived)
+# -f use the next argument as the archive file name
+
+
+# Verify the content of the tar.gz file
+$ tar -tzvf archive.tar.gz
+
+# drwxr-xr-x root/root         0 2025-04-30 05:47 data/
+# -rw-r--r-- root/root        25 2025-04-30 05:46 data/file1.txt
+# -rw-r--r-- root/root        20 2025-04-30 05:47 data/file2.dat
+
+### Now, let's create the Dockerfile
+
+######### Dockerfile #########
+# Please remember that all WORKDIR and destination paths in COPY and ADD are referring to the Image and container file systems; not the docker host
+
+# Use a small base image
+FROM alpine
+
+#Download the unzip tool, we will need to unzip a .zip file below
+RUN apk add --no-cache unzip
+
+# Set working directory
+WORKDIR /app
+
+# Copy a simple file using COPY
+# Assumes hello.txt is in the build context (same folder or subdir)
+COPY test.txt ./test-copy.txt
+
+# Add a tar archive — this will auto-extract into /app/extracted-files
+# Assumes files.tar.gz is in the build context - 
+# The Auto extract compressed files feature of the ADD command does not support .zip compressed files.
+
+ADD archive.tar.gz ./extracted-files/
+
+
+# Create a remote directory under the /app directory. ADD when used with a URL does not create the destination directory if it does not exist
+RUN mkdir -p /app/remote
+
+# Add a remote zip app.zip file from a URL 
+# This downloads the file and saves it as app.zip under the remote directory
+# Uncomment the line below only if you're okay downloading from the web
+ADD https://dolfined-rds-lab-aug2023.s3.us-east-1.amazonaws.com/app.zip ./remote/app.zip
+
+#Unzip the app.zip file (this would not be required if the file was .tar, .tar.gz, tar.bz2, tar.xz)
+RUN unzip ./remote/app.zip -d ./remote && rm ./remote/app.zip
+
+# Default command
+CMD ["ls", "-l", "/app"]

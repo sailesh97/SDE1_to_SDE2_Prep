@@ -1,0 +1,149 @@
+#############################################################################
+###### Bridge Mode - Inbound Access from the Internet to the container ######
+#############################################################################
+
+# Create an Nginx container, name is cont1, interactive mode, bash shell 
+$ docker run -it --name cont1 nginx bash
+
+# Nginx by default listens on port HTTP (80)
+
+# Open a new terminal to the EC2 docker host from the AWS console (use EC2 instance connect). Now, use docker ps on the EC2 docker host (in the new terminal) to verify the container is running, and look at the Port part and how it shown
+$ docker ps
+
+
+
+# Port HTTP (80) is the default http port which Nginx listens on.
+# To verify this, 
+
+# From within the container cont1 shell run the command
+$ cat /etc/nginx/conf.d/default.conf | grep listen
+
+# Look for the line 
+# Listen 80,
+# or cat the file and look for
+
+# server {
+#     listen       80;
+#     server_name  localhost;
+
+# Now, start the nginx service within the container
+$ nginx
+
+
+# Now, we need to test access to the nginx container from the internet (from your laptop)
+# Log on to the AWS console, in the EC2 dashboard, select the Docker Server instance by ticking the box to the left of the docker server name. 
+# The details page will open. search for an copy the public IP IPv4 address of the EC2 instance.
+
+# Open a new web browser tab and type
+
+http://<Docker Server public IPv4 address>:80 
+# This should initiate an HTTP request on port 80 to the docker server host
+# press enter. 
+# Did the page show the default Nginx server? Why not?
+# This is because by default, there is no port binding between the running nginx container port and the host ports.
+
+# Since we cannot do the port binding after creating the container.
+# We need to create a new Nginx container, cont2, Nginx Image, and create it in interactive and detached mode with port 80 mapped to docker host port 3000 using the -p 3000:80 option
+
+$ docker run -itd -p 3000:80 --name cont2 /bin/bash
+
+# Now, open a new web browser tab and navigate again to the public IP of the docker server on port 3000
+
+http://<Docker Server public IPv4 address>:3000 
+# You should see the default Nginx welcome page now.
+
+# check the port mapping using the command
+
+$ docker port cont2
+# You should something similar to :
+# 80/tcp -> 0.0.0.0:3000
+# 80/tcp -> [::]:3000
+
+
+# Now let's check the iptables to see the Dynamic NAT details
+$ iptables -t nat -L -n       # to show ip tabels
+# This command can list NAT (Network Address Translation) rules on a Linux system using iptables.
+# iptables  - The tool to configure and view Linux kernel firewall rules.
+# -t nat - Specifies the NAT table. 
+# -L - Lists the rules in the specified table.
+# -n - Shows IP addresses and ports numerically
+
+
+# Look for an entry that shows 
+# target   prot   opt     source       destination
+# DNAT     6       --   0.0.0.0/0      0.0.0.0/0      tcp dpt:3000 to:172.17.0.2:80
+
+
+# Also run docker ps and look under the PORTS
+$ docker ps
+
+
+# CONTAINER ID  IMAGE    COMMAND                     PORTS                        
+# f0a07a80f443  nginx   "/docker-entrypoin"  0.0.0.0:3000->80/tcp, [::]:3000->80/tcp
+
+
+
+# Remove the containers
+$ docker rm -f cont1 cont2
+
+
+
+
+###############################################################
+####### Single Host - Multiple Containers -  Same Port ########
+###############################################################
+
+
+# We will create two Nginx containers and configure port mapping for each such that we can browse to the two containers when they are running simultaneously.
+
+# Create an Nginx container and export port 80 mapped to port 3000 on the docker host in detached mode
+
+$ docker run -d --name first_nginx -p 3000:80 nginx
+
+# Verify that the container is running using 
+$ docker ps
+
+# Run curl to browse the Nginx container default page by using the private IPv4 address of the Docker server (EC2 Docker host) on port 3000 which is mapped to the container
+$ curl <Docker host private IPv4 address>:3000
+
+# Open a browser window and browse to the Doker host's public IPv4 address on port 3000
+http://<Docker host public IPv4 address>:3000
+
+
+# Create a second Nginx container and export port 80 mapped to port 3001 on the docker host in detached mode
+
+$ docker run -d --name second_nginx -p 3001:80 nginx
+
+# Verify that the container is running using 
+$ docker ps
+
+# Run curl to browse the Nginx container default page by using the private IPv4 address of the Docker server (EC2 Docker host) on port 3001 which is mapped to the container
+$ curl <Docker host private IP4 address>:3001
+
+# Open a browser window and browse to the Doker host's public IPv4 address on port 3001
+http://<Docker host public IPv4 address>:3001
+
+
+
+# Now let's check the iptables to see the Dynamic NAT details
+$ sudo iptables -t nat -L -n       # to show ip tabels
+
+# Look for an entry that shows 
+# target   prot   opt     source       destination
+# DNAT     6       --   0.0.0.0/0      0.0.0.0/0      tcp dpt:3000 to:172.17.0.2:80
+# DNAT     6       --   0.0.0.0/0      0.0.0.0/0      tcp dpt:3001 to:172.17.0.3:80
+
+# Also run docker ps and look under the PORTS
+$ docker ps
+
+
+# CONTAINER ID  IMAGE    COMMAND                     PORTS                        
+# dde3d0c52ebc  nginx   "/docker-entrypoin"  0.0.0.0:3000->80/tcp, [::]:3000->80/tcp
+# b0261ede735e  nginx   "/docker-entrypoin"  0.0.0.0:3001->80/tcp, [::]:3001->80/tcp
+
+
+# Remove the containers
+$ docker rm -f first_nginx 2second_nginx
+
+########################## LAB ENDS #######################################
+
