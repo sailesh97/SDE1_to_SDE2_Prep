@@ -604,3 +604,206 @@ you get:
 **`CMD`** → Start this by default
 **`ADD`** → COPY + extra capabilities
 
+---------------------------------------------------
+
+### Now as you understand the anatomy of dockerfile, let's understand what is *Build Context* in Docker:
+**Build context** is the set of files and directories that Docker is allowed to access when building an image.
+
+The easiest way to understand it is with `docker build`.
+
+### Example
+
+Suppose your project is:
+
+```text
+my-app/
+├── Dockerfile
+├── package.json
+├── package-lock.json
+├── server.js
+└── src/
+    └── app.js
+```
+
+You run:
+
+```bash
+docker build -t my-app .
+```
+
+The `.` at the end is very important.
+
+It means:
+
+> **Use the current directory (`my-app/`) as the build context.**
+
+So Docker gets access to:
+
+```text
+my-app/
+├── Dockerfile
+├── package.json
+├── package-lock.json
+├── server.js
+└── src/
+```
+
+---
+
+### Why does build context matter?
+
+Consider:
+
+```dockerfile
+FROM node:20
+
+WORKDIR /app
+
+COPY . .
+```
+
+The `.` on the right side of `COPY` means:
+
+> Copy files from the **build context** into the image.
+
+So:
+
+```text
+Build context                  Docker image
+
+my-app/                         /app/
+├── package.json       ─────→   ├── package.json
+├── server.js          ─────→   ├── server.js
+└── src/               ─────→   └── src/
+```
+
+---
+
+### Important: Dockerfile is not necessarily the build context
+
+You could have:
+
+```text
+project/
+├── docker/
+│   └── Dockerfile
+├── src/
+├── package.json
+└── server.js
+```
+
+and run:
+
+```bash
+docker build -f docker/Dockerfile .
+```
+
+Here:
+
+```text
+-f docker/Dockerfile
+        ↑
+   Dockerfile location
+```
+
+while:
+
+```text
+.
+↑
+Build context
+```
+
+So the **Dockerfile and build context are separate concepts**.
+
+---
+
+### Why can't `COPY` access files outside the context?
+
+Suppose:
+
+```text
+project/
+├── Dockerfile
+├── app/
+│   └── server.js
+└── secret/
+    └── password.txt
+```
+
+You run:
+
+```bash
+docker build -f Dockerfile app/
+```
+
+Now the build context is:
+
+```text
+app/
+```
+
+Therefore this won't work:
+
+```dockerfile
+COPY ../secret/password.txt /app/
+```
+
+because `secret/` is **outside the build context**.
+
+Docker intentionally restricts the build to the context you supplied.
+
+---
+
+### What actually happens?
+
+When you run:
+
+```bash
+docker build -t myapp .
+```
+
+conceptually:
+
+```text
+                 docker build
+                      │
+                      ↓
+              ┌───────────────┐
+              │ Build Context │
+              │               │
+              │ Dockerfile    │
+              │ package.json  │
+              │ server.js     │
+              │ src/          │
+              └───────┬───────┘
+                      │
+                      ↓
+                Docker builder
+                      │
+                      ↓
+                  Docker Image
+```
+
+Docker sends/makes the specified context available to the builder, and instructions such as `COPY` and `ADD` can use files from it.
+
+### One thing to remember
+
+```bash
+docker build -t myapp .
+                         ↑
+                  BUILD CONTEXT
+```
+
+So when you see:
+
+```dockerfile
+COPY . .
+```
+
+think:
+
+> **"Copy everything from my build context into the current `WORKDIR` inside the image."**
+
+And this is also why a **`.dockerignore`** file is important—it lets you exclude things like `node_modules`, `.git`, secrets, logs, etc. from the build context.
+
